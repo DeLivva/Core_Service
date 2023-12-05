@@ -13,7 +13,7 @@ public class DefaultTrackingNumberGenerator implements TrackingNumberGenerator {
     public String generateTrackingNumber(String cityFrom, String cityTo) {
         String formattedDateTime = LocalDateTime
                 .now(ZoneId.of("Asia/Tashkent"))
-                .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+                .format(DateTimeFormatter.ofPattern("yyMMddHHmmssSS"));
 
         return getCityCode(cityFrom) + formattedDateTime + getCityCode(cityTo);
     }
