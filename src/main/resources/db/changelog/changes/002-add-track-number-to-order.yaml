@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: Abdurauf
+      changes:
+        - addColumn:
+            tableName: orders
+            columns:
+              - column:
+                  name: track_number
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+                    unique: true
