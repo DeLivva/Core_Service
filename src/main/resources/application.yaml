@@ -21,3 +21,9 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/liquibase-changelog.yaml
+
+cloud:
+  map:
+    url: https://nominatim.openstreetmap.org/reverse
+  auth-service:
+    url: http://localhost:5000
