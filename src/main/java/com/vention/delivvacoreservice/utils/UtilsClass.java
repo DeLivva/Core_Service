@@ -20,13 +20,4 @@ public class UtilsClass {
             throw new BadRequestException("Invalid date time format....!!");
         }
     }
-
-    public static boolean validateDestinations(List<GeolocationDTO> destinations) {
-        for (GeolocationDTO destination : destinations) {
-            if(destination.getLatitude() == null || destination.getLongitude() == null) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

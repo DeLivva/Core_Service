@@ -14,8 +14,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GeolocationDTO {
-    @NotNull
     private Double longitude;
-    @NotNull
     private Double latitude;
 }
