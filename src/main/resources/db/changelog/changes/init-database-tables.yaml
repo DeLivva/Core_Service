@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
       author: Shakhzod
+      id: 1
       changes:
         - createTable:
-            tableName: order_status
+            tableName: order_destinations
             columns:
               - column:
                   name: id
@@ -14,18 +14,23 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: name
-                  type: varchar(100)
+                  name: longitude
+                  type: double precision
                   constraints:
                     nullable: false
               - column:
-                  name: created_date
+                  name: latitude
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
                   type: timestamp
                   defaultValueComputed: 'CURRENT_TIMESTAMP'
                   constraints:
                     nullable: false
               - column:
-                  name: updated_date
+                  name: updated_at
                   type: timestamp
                   defaultValueComputed: 'CURRENT_TIMESTAMP'
                   constraints:
@@ -49,12 +54,16 @@ databaseChangeLog:
                   name: starting_destination_id
                   type: bigint
                   constraints:
-                    nullable: false
+                    foreignKeyName: fk_orders_starting_destinations
+                    referencedTableName: order_destinations
+                    referencedColumnNames: id
               - column:
                   name: final_destination_id
                   type: bigint
                   constraints:
-                    nullable: false
+                    foreignKeyName: fk_orders_final_destinations
+                    referencedTableName: order_destinations
+                    referencedColumnNames: id
               - column:
                   name: customer_id
                   type: bigint
@@ -63,40 +72,42 @@ databaseChangeLog:
               - column:
                   name: courier_id
                   type: bigint
-                  constraints:
-                    nullable: false
               - column:
-                  name: status_id
-                  type: bigint
+                  name: status
+                  type: varchar(100)
                   constraints:
                     nullable: false
               - column:
                   name: item_description
                   type: varchar(300)
               - column:
-                  name: delivery_started_date
+                  name: delivery_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: track_number
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: delivery_started_at
                   type: timestamp
               - column:
-                  name: delivery_finished_date
+                  name: delivery_finished_at
                   type: timestamp
               - column:
-                  name: created_date
+                  name: created_at
                   type: timestamp
                   defaultValueComputed: 'CURRENT_TIMESTAMP'
                   constraints:
                     nullable: false
               - column:
-                  name: updated_date
+                  name: updated_at
                   type: timestamp
                   defaultValueComputed: 'CURRENT_TIMESTAMP'
                   constraints:
                     nullable: false
-        - addForeignKeyConstraint:
-            baseTableName: orders
-            baseColumnNames: status_id
-            referencedTableName: order_status
-            referencedColumnNames: id
-            constraintName: fk_orders_status
 
   - changeSet:
       author: Shakhzod
@@ -130,13 +141,13 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: created_date
+                  name: created_at
                   type: timestamp
                   defaultValueComputed: 'CURRENT_TIMESTAMP'
                   constraints:
                     nullable: false
               - column:
-                  name: updated_date
+                  name: updated_at
                   type: timestamp
                   defaultValueComputed: 'CURRENT_TIMESTAMP'
                   constraints:
