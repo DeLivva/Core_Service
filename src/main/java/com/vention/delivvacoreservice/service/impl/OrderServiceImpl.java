@@ -1,7 +1,7 @@
 package com.vention.delivvacoreservice.service.impl;
 
+import com.vention.delivvacoreservice.domain.Order;
 import com.vention.delivvacoreservice.domain.OrderDestination;
-import com.vention.delivvacoreservice.domain.OrderEntity;
 import com.vention.delivvacoreservice.dto.GeolocationDTO;
 import com.vention.delivvacoreservice.dto.response.UserResponseDTO;
 import com.vention.delivvacoreservice.exception.BadRequestException;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.vention.delivvacoreservice.utils.UtilsClass.convertStringToTimestamp;
+import static com.vention.delivvacoreservice.utils.DateUtils.convertStringToTimestamp;
 
 @Slf4j
 @Service
@@ -45,12 +45,12 @@ public class OrderServiceImpl implements OrderService {
                 .getOrderDestinationWithValidation(startingDestinationDTO);
         OrderDestination savedFinalPlace = orderDestinationService
                 .getOrderDestinationWithValidation(finalDestinationDTO);
-        OrderEntity order = orderMapper.mapOrderRequestToEntity(request);
+        Order order = orderMapper.mapOrderRequestToEntity(request);
         order.setDeliveryDate(convertStringToTimestamp(request.getScheduledDeliveryDate()));
         order.setTrackNumber(trackNumberGenerator.generateTrackNumber(savedStartingPlace, savedFinalPlace));
         order.setStartingDestination(savedStartingPlace);
         order.setFinalDestination(savedFinalPlace);
-        OrderEntity savedOrder = orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
         OrderResponseDTO orderResponse = orderMapper.mapOrderEntityToResponse(savedOrder);
         orderResponse.setCostumer(customer);
         return orderResponse;

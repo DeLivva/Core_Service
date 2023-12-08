@@ -20,24 +20,19 @@ public class OrderDestinationServiceImpl implements OrderDestinationService {
 
     @Override
     public OrderDestination getOrderDestinationWithValidation(GeolocationDTO geolocation) {
-        OrderDestination orderDestination;
         Optional<OrderDestination> optionalDestination = orderDestinationRepository.findByLongitudeAndLatitude(
                 geolocation.getLongitude(),
                 geolocation.getLatitude()
         );
-        orderDestination = optionalDestination.orElseGet(
+        return optionalDestination.orElseGet(
                 () -> orderDestinationRepository.save(orderMapper.mapOrderRequestToOrderDestination(geolocation)
         ));
-        return orderDestination;
     }
 
     @Override
     public boolean areDestinationsValid(List<GeolocationDTO> destinations) {
-        for (GeolocationDTO destination : destinations) {
-            if(destination.getLatitude() == null || destination.getLongitude() == null) {
-                return false;
-            }
-        }
-        return true;
+        return destinations.stream().allMatch(
+                destination -> destination.getLongitude() != null && destination.getLatitude() != null
+        );
     }
 }

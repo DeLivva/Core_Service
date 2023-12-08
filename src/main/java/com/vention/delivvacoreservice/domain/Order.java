@@ -22,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "orders")
-public class OrderEntity extends BaseEntity {
+public class Order extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "starting_destination_id", referencedColumnName = "id")

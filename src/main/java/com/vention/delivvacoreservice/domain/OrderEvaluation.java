@@ -25,7 +25,7 @@ public class OrderEvaluation extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
-    private OrderEntity order;
+    private Order order;
 
     @Column(nullable = false)
     private Long userId;
