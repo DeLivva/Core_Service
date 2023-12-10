@@ -1,5 +1,6 @@
 package com.vention.delivvacoreservice.domain;
 
+import com.vention.general.lib.enums.OrderStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

@@ -1,8 +1,8 @@
 package com.vention.delivvacoreservice.config;
 
-import com.vention.delivvacoreservice.dto.response.GlobalResponseDTO;
-import com.vention.delivvacoreservice.exception.BadRequestException;
 import com.vention.delivvacoreservice.exception.JsonParsingException;
+import com.vention.general.lib.dto.response.GlobalResponseDTO;
+import com.vention.general.lib.exceptions.BadRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
