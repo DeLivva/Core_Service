@@ -10,13 +10,15 @@ import com.vention.delivvacoreservice.feign_clients.UserClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
 import com.vention.delivvacoreservice.repository.OrderRepository;
 import com.vention.delivvacoreservice.service.OrderDestinationService;
+import com.vention.general.lib.exceptions.BadRequestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;

@@ -4,7 +4,6 @@ import com.vention.delivvacoreservice.domain.OrderDestination;
 import com.vention.delivvacoreservice.dto.GeolocationDTO;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
 import com.vention.delivvacoreservice.repository.OrderDestinationRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,7 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.doReturn;
