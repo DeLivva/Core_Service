@@ -1,6 +1,5 @@
 package com.vention.delivvacoreservice.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vention.delivvacoreservice.dto.GeolocationDTO;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
@@ -18,9 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -61,8 +58,8 @@ class OrderControllerTest {
         doReturn(responseDTO).when(orderService).createOrder(any());
         // then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/orders/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonData))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonData))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         verify(orderService, times(1)).createOrder(any());
     }
