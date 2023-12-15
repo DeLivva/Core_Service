@@ -9,7 +9,9 @@ import com.vention.delivvacoreservice.dto.response.UserResponseDTO;
 import com.vention.delivvacoreservice.feign_clients.UserClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
 import com.vention.delivvacoreservice.repository.OrderRepository;
+import com.vention.delivvacoreservice.service.MailService;
 import com.vention.delivvacoreservice.service.OrderDestinationService;
+import com.vention.delivvacoreservice.utils.MapUtils;
 import com.vention.general.lib.exceptions.BadRequestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +35,12 @@ class OrderServiceImplTest {
 
     @Mock
     private UserClient userClient;
+
+    @Mock
+    private MapUtils mapUtils;
+
+    @Mock
+    private MailService mailService;
 
     @Mock
     private OrderMapper orderMapper;

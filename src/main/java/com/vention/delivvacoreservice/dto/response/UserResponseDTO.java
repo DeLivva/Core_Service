@@ -16,5 +16,6 @@ public class UserResponseDTO {
     private String username;
     private String phoneNumber;
     private String email;
+    public String photoLink;
     private VehicleResponseDTO vehicle;
 }
