@@ -5,10 +5,9 @@ spring:
   config:
     import: optional:file:.env[.properties]
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://delivva-core.c4cvypbefffg.eu-north-1.rds.amazonaws.com:5432/postgres
+    username: delivva
+    password: password
   jpa:
     hibernate:
       ddl-auto: validate
@@ -30,7 +29,7 @@ cloud:
   map:
     url: https://nominatim.openstreetmap.org/reverse
   auth-service:
-    url: http://localhost:5000
+    url: http://Delivva-testing-environment-env.eba-jighrhr6.us-east-1.elasticbeanstalk.com
 
 rabbitmq:
   exchange:
