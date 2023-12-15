@@ -1,14 +1,13 @@
 server:
-  port: 9000
+  port: 5000
 
 spring:
   config:
     import: optional:file:.env[.properties]
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://delivva-core.c4cvypbefffg.eu-north-1.rds.amazonaws.com:5432/postgres
+    username: delivva
+    password: password
   jpa:
     hibernate:
       ddl-auto: validate
@@ -21,11 +20,22 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/liquibase-changelog.yaml
+  rabbitmq:
+    username: Delivva
+    password: delivvadevelopers4
+    addresses: amqps://b-24e330b5-34c3-48c1-87df-d65aefcd7ec3.mq.us-east-1.amazonaws.com:5671
 
 cloud:
   map:
     url: https://nominatim.openstreetmap.org/reverse
   auth-service:
-    url: http://localhost:5000
+    url: http://Delivva-testing-environment-env.eba-jighrhr6.us-east-1.elasticbeanstalk.com
   dispute-service:
-    url: http:/localhost:8100
+    url: http://localhost:5000
+
+rabbitmq:
+  exchange:
+    name: geo_direct_exchange
+  routing:
+    key:
+      geo: geo_service_routing_key
