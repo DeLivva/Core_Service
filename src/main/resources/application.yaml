@@ -34,7 +34,7 @@ cloud:
 
 rabbitmq:
   exchange:
-    name: notification_direct_exchange
+    name: geo_direct_exchange
   routing:
     key:
       geo: geo_service_routing_key
