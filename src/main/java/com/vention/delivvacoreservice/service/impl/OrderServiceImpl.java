@@ -3,14 +3,18 @@ package com.vention.delivvacoreservice.service.impl;
 import com.vention.delivvacoreservice.domain.Order;
 import com.vention.delivvacoreservice.domain.OrderDestination;
 import com.vention.delivvacoreservice.dto.GeolocationDTO;
+import com.vention.delivvacoreservice.dto.mail.OrderMailDTO;
+import com.vention.delivvacoreservice.dto.mail.Sender;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
 import com.vention.delivvacoreservice.dto.response.OrderResponseDTO;
 import com.vention.delivvacoreservice.dto.response.UserResponseDTO;
 import com.vention.delivvacoreservice.feign_clients.UserClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
 import com.vention.delivvacoreservice.repository.OrderRepository;
+import com.vention.delivvacoreservice.service.MailService;
 import com.vention.delivvacoreservice.service.OrderDestinationService;
 import com.vention.delivvacoreservice.service.OrderService;
+import com.vention.delivvacoreservice.utils.MapUtils;
 import com.vention.general.lib.enums.OrderStatus;
 import com.vention.general.lib.exceptions.BadRequestException;
 import com.vention.general.lib.exceptions.DataNotFoundException;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.vention.general.lib.utils.DateUtils.convertStringToTimestamp;
 
@@ -30,6 +35,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final UserClient userClient;
     private final OrderMapper orderMapper;
+    private final MapUtils mapUtils;
+    private final MailService mailService;
     private final TrackNumberGenerator trackNumberGenerator;
     private final OrderDestinationService orderDestinationService;
     private final OrderRepository orderRepository;
@@ -60,15 +67,73 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderStatus getStatus(Long id) {
-        var order = orderRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("order not found on id" + id));
+        var order = getById(id);
         return order.getStatus();
     }
 
     @Override
     public void setStatus(Long id, OrderStatus status) {
-        var order = orderRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("order not found on id" + id));
+        var order = getById(id);
         order.setStatus(status);
+    }
+
+    @Override
+    public void offerTheDelivery(boolean byCustomer, Long courierId, Long orderId) {
+        Order order = getById(orderId);
+        UserResponseDTO courier = userClient.getUserById(courierId);
+        UserResponseDTO customer = userClient.getUserById(order.getCustomerId());
+        OrderMailDTO mailDTO = orderMapper.mapOrderEntityToOrderMailDTO(order);
+        mailDTO.setCourier(courier);
+        mailDTO.setCustomer(customer);
+        mailDTO.setStartLocation(mapUtils.getCityNameByCoordinates(order.getStartingDestination()));
+        mailDTO.setFinalLocation(mapUtils.getCityNameByCoordinates(order.getFinalDestination()));
+        mailDTO.setSender((byCustomer) ? Sender.CUSTOMER : Sender.COURIER);
+        mailService.sendAnOffer(mailDTO);
+    }
+
+    @Override
+    public void approveAnOffer(Long courierId, Long orderId) {
+        Order order = getById(orderId);
+        if(order.getCourierId() != null) {
+            throw new BadRequestException("Order has already been assigned to the courier");
+        }
+        UserResponseDTO courier = userClient.getUserById(courierId);
+        order.setCourierId(courier.getId());
+        order.setStatus(OrderStatus.PICKED_UP);
+        orderRepository.save(order);
+    }
+
+    @Override
+    public void rejectAnOrder(Long userId, Long orderId) {
+        Order order = getById(orderId);
+        if(Objects.equals(order.getCustomerId(), userId)) {
+            if(order.getStatus() == OrderStatus.CREATED || order.getStatus() == OrderStatus.PICKED_UP) {
+                order.setStatus(OrderStatus.REJECTED_BY_CUSTOMER);
+            } else {
+                throw new BadRequestException("Order cannot be canceled!!!");
+            }
+        } else if(Objects.equals(order.getCourierId(), userId)) {
+            if(order.getStatus() == OrderStatus.PICKED_UP) {
+                order.setStatus(OrderStatus.REJECTED_BY_COURIER);
+            } else {
+                throw new BadRequestException("Order cannot be canceled!!!");
+            }
+        }
+        orderRepository.save(order);
+    }
+
+    @Override
+    public Order getById(Long orderId) {
+        return orderRepository.findById(orderId).orElseThrow(
+                () -> new DataNotFoundException("Order not found on id : " + orderId)
+        );
+    }
+
+    @Override
+    public List<OrderResponseDTO> getOrderList() {
+        return orderRepository.findAllByStatus()
+                .stream()
+                .map(orderMapper::mapOrderEntityToResponse)
+                .toList();
     }
 }

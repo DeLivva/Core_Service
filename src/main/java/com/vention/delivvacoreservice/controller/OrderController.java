@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -37,5 +40,46 @@ public class OrderController {
     public ResponseEntity<Void> setStatus(@PathVariable("id") Long id, OrderStatus status) {
         orderService.setStatus(id, status);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/offer-by-courier")
+    public ResponseEntity<Void> deliveryOfferByCourier(
+            @RequestParam Long courierId,
+            @RequestParam Long orderId
+    ) {
+        orderService.offerTheDelivery(false, courierId, orderId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/offer-by-customer")
+    public ResponseEntity<Void> deliveryOfferByCustomer(
+            @RequestParam Long courierId,
+            @RequestParam Long orderId
+    ) {
+        orderService.offerTheDelivery(true, courierId, orderId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/approve-offer")
+    public ResponseEntity<Void> approveAnOffer(
+            @RequestParam Long courierId,
+            @RequestParam Long orderId
+    ) {
+      orderService.approveAnOffer(courierId, orderId);
+      return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/cancel")
+    public ResponseEntity<Void> rejectTheOrder(
+            @RequestParam Long userId,
+            @RequestParam Long orderId
+    ) {
+        orderService.rejectAnOrder(userId, orderId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/get-orders")
+    public ResponseEntity<List<OrderResponseDTO>> getOrderList() {
+        return ResponseEntity.ok(orderService.getOrderList());
     }
 }
