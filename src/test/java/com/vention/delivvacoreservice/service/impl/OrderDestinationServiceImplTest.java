@@ -1,9 +1,9 @@
 package com.vention.delivvacoreservice.service.impl;
 
 import com.vention.delivvacoreservice.domain.OrderDestination;
-import com.vention.delivvacoreservice.dto.GeolocationDTO;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
 import com.vention.delivvacoreservice.repository.OrderDestinationRepository;
+import com.vention.general.lib.dto.response.GeolocationDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

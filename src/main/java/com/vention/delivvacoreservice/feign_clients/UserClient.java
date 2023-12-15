@@ -1,6 +1,6 @@
 package com.vention.delivvacoreservice.feign_clients;
 
-import com.vention.delivvacoreservice.dto.response.UserResponseDTO;
+import com.vention.general.lib.dto.response.UserResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

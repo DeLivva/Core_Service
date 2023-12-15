@@ -27,3 +27,5 @@ cloud:
     url: https://nominatim.openstreetmap.org/reverse
   auth-service:
     url: http://localhost:5000
+  dispute-service:
+    url: http:/localhost:8100
