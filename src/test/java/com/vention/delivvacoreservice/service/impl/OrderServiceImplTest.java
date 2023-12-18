@@ -4,6 +4,9 @@ import com.vention.delivvacoreservice.domain.Order;
 import com.vention.delivvacoreservice.domain.OrderDestination;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
 import com.vention.delivvacoreservice.feign_clients.UserClient;
+import com.vention.delivvacoreservice.dto.response.OrderResponseDTO;
+import com.vention.delivvacoreservice.dto.response.UserResponseDTO;
+import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
 import com.vention.delivvacoreservice.repository.OrderRepository;
 import com.vention.delivvacoreservice.service.MailService;
@@ -34,7 +37,7 @@ import static org.mockito.Mockito.verify;
 class OrderServiceImplTest {
 
     @Mock
-    private UserClient userClient;
+    private AuthServiceClient authServiceClient;
 
     @Mock
     private MapUtils mapUtils;
@@ -77,7 +80,7 @@ class OrderServiceImplTest {
         doReturn(finalPlaceDTO).when(request).getFinalDestination();
         doReturn(date).when(request).getScheduledDeliveryDate();
         doReturn(true).when(orderDestinationService).areDestinationsValid(anyList());
-        doReturn(userResponseDTO).when(userClient).getUserById(anyLong());
+        doReturn(userResponseDTO).when(authServiceClient).getUserById(anyLong());
         doReturn(destination).when(orderDestinationService).getOrderDestinationWithValidation(any());
         doReturn(order).when(orderMapper).mapOrderRequestToEntity(any());
         doReturn(trackNumber).when(trackNumberGenerator).generateTrackNumber(any(), any());
@@ -89,7 +92,7 @@ class OrderServiceImplTest {
         verify(request, times(1)).getFinalDestination();
         verify(request, times(1)).getStartingDestination();
         verify(orderDestinationService, times(1)).areDestinationsValid(anyList());
-        verify(userClient, times(1)).getUserById(anyLong());
+        verify(authServiceClient, times(1)).getUserById(anyLong());
         verify(orderDestinationService, times(2)).getOrderDestinationWithValidation(any());
         verify(orderMapper, times(1)).mapOrderRequestToEntity(any());
         verify(trackNumberGenerator, times(1)).generateTrackNumber(any(), any());
@@ -111,7 +114,7 @@ class OrderServiceImplTest {
         verify(request, times(1)).getFinalDestination();
         verify(request, times(1)).getStartingDestination();
         verify(orderDestinationService, times(1)).areDestinationsValid(anyList());
-        verify(userClient, never()).getUserById(anyLong());
+        verify(authServiceClient, never()).getUserById(anyLong());
         verify(orderDestinationService, never()).getOrderDestinationWithValidation(any());
         verify(orderMapper, never()).mapOrderRequestToEntity(any());
         verify(trackNumberGenerator, never()).generateTrackNumber(any(), any());
