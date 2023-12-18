@@ -37,3 +37,6 @@ rabbitmq:
   routing:
     key:
       geo: geo_service_routing_key
+
+jwt:
+  secret-key: 753778214125442A472IkphdZSIsImasV4cCIee6MTY4sdNzUwMTQwN3F452848567890iuyiu67567886578uyutuio78654678976549eyJS678965467uior678545
