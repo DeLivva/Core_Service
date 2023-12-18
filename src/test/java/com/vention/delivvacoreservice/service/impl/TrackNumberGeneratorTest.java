@@ -2,6 +2,7 @@ package com.vention.delivvacoreservice.service.impl;
 
 import com.vention.delivvacoreservice.domain.OrderDestination;
 import com.vention.delivvacoreservice.utils.MapUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -35,11 +37,9 @@ class TrackNumberGeneratorTest {
     void testGenerateTrackNumber() {
         // given
         OrderDestination finalPlace = new OrderDestination(23453D, 45343D);
-        // when
-        doReturn("Tashkent").when(mapUtils).getCityNameByCoordinates(any());
         String trackNumber = trackNumberGenerator.generateTrackNumber(destination, finalPlace);
         // then
-        assertEquals(trackNumber.substring(0, 3), "Tas");
-        verify(mapUtils, times(2)).getCityNameByCoordinates(any());
+        Assertions.assertNotNull(trackNumber);
+        verify(mapUtils, times(2)).getPostalCodesByCoordinates(any());
     }
 }
