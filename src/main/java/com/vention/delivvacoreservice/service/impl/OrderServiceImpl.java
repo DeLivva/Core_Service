@@ -49,7 +49,6 @@ public class OrderServiceImpl implements OrderService {
         if (!orderDestinationService.areDestinationsValid(List.of(startingDestinationDTO, finalDestinationDTO))) {
             throw new BadRequestException("Invalid location data is provided");
         }
-        UserResponseDTO customer = userClient.getUserById(request.getUserId());
         OrderDestination savedStartingPlace = orderDestinationService
                 .getOrderDestinationWithValidation(startingDestinationDTO);
         OrderDestination savedFinalPlace = orderDestinationService
@@ -60,15 +59,13 @@ public class OrderServiceImpl implements OrderService {
         order.setStartingDestination(savedStartingPlace);
         order.setFinalDestination(savedFinalPlace);
         Order savedOrder = orderRepository.save(order);
-        OrderResponseDTO orderResponse = orderMapper.mapOrderEntityToResponse(savedOrder);
-        orderResponse.setCostumer(customer);
-        return orderResponse;
+        return convertEntityToResponseDTO(savedOrder);
     }
 
     @Override
     public OrderResponseDTO findById(Long id) {
         var order = getById(id);
-        return orderMapper.mapOrderEntityToResponse(order);
+        return convertEntityToResponseDTO(order);
     }
 
     @Override
@@ -136,5 +133,12 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .map(orderMapper::mapOrderEntityToResponse)
                 .toList();
+    }
+
+    private OrderResponseDTO convertEntityToResponseDTO(Order order) {
+        var orderResponseDTO = orderMapper.mapOrderEntityToResponse(order);
+//        orderResponseDTO.setCostumer(userClient.getUserById(order.getCustomerId()));
+//        orderResponseDTO.setCourier(userClient.getUserById(order.getCourierId()));
+        return orderResponseDTO;
     }
 }
