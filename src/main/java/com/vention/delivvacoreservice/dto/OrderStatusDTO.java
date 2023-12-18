@@ -1,6 +1,5 @@
 package com.vention.delivvacoreservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +12,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GeolocationDTO {
-    private Double longitude;
-    private Double latitude;
+public class OrderStatusDTO {
+    @NotNull
+    private String status;
 }
