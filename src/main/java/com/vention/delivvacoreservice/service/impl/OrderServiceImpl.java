@@ -8,7 +8,7 @@ import com.vention.delivvacoreservice.dto.mail.Sender;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
 import com.vention.delivvacoreservice.dto.response.OrderResponseDTO;
 import com.vention.delivvacoreservice.dto.response.UserResponseDTO;
-import com.vention.delivvacoreservice.feign_clients.UserClient;
+import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
 import com.vention.delivvacoreservice.repository.OrderRepository;
 import com.vention.delivvacoreservice.service.MailService;
@@ -33,7 +33,7 @@ import static com.vention.general.lib.utils.DateUtils.convertStringToTimestamp;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private final UserClient userClient;
+    private final AuthServiceClient authServiceClient;
     private final OrderMapper orderMapper;
     private final MapUtils mapUtils;
     private final MailService mailService;
@@ -49,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
         if (!orderDestinationService.areDestinationsValid(List.of(startingDestinationDTO, finalDestinationDTO))) {
             throw new BadRequestException("Invalid location data is provided");
         }
-        UserResponseDTO customer = userClient.getUserById(request.getUserId());
+        UserResponseDTO customer = authServiceClient.getUserById(request.getUserId());
         OrderDestination savedStartingPlace = orderDestinationService
                 .getOrderDestinationWithValidation(startingDestinationDTO);
         OrderDestination savedFinalPlace = orderDestinationService
@@ -80,8 +80,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void offerTheDelivery(boolean byCustomer, Long courierId, Long orderId) {
         Order order = getById(orderId);
-        UserResponseDTO courier = userClient.getUserById(courierId);
-        UserResponseDTO customer = userClient.getUserById(order.getCustomerId());
+        UserResponseDTO courier = authServiceClient.getUserById(courierId);
+        UserResponseDTO customer = authServiceClient.getUserById(order.getCustomerId());
         OrderMailDTO mailDTO = orderMapper.mapOrderEntityToOrderMailDTO(order);
         mailDTO.setCourier(courier);
         mailDTO.setCustomer(customer);
@@ -97,7 +97,7 @@ public class OrderServiceImpl implements OrderService {
         if(order.getCourierId() != null) {
             throw new BadRequestException("Order has already been assigned to the courier");
         }
-        UserResponseDTO courier = userClient.getUserById(courierId);
+        UserResponseDTO courier = authServiceClient.getUserById(courierId);
         order.setCourierId(courier.getId());
         order.setStatus(OrderStatus.PICKED_UP);
         orderRepository.save(order);
