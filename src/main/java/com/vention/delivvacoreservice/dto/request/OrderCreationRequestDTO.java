@@ -1,6 +1,6 @@
 package com.vention.delivvacoreservice.dto.request;
 
-import com.vention.delivvacoreservice.dto.GeolocationDTO;
+import com.vention.general.lib.dto.response.GeolocationDTO;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

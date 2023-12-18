@@ -1,6 +1,6 @@
 package com.vention.delivvacoreservice.dto.mail;
 
-import com.vention.delivvacoreservice.dto.response.UserResponseDTO;
+import com.vention.general.lib.dto.response.UserResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

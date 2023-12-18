@@ -1,8 +1,8 @@
 package com.vention.delivvacoreservice.controller;
 
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
-import com.vention.delivvacoreservice.dto.response.OrderResponseDTO;
 import com.vention.delivvacoreservice.service.OrderService;
+import com.vention.general.lib.dto.response.OrderResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +31,9 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(request));
     }
 
-    @GetMapping("/{id}/status")
-    public ResponseEntity<OrderStatus> getStatus(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(orderService.getStatus(id));
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderResponseDTO> getStatus(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(orderService.findById(id));
     }
 
     @PutMapping("/{id}/status")
@@ -65,8 +65,8 @@ public class OrderController {
             @RequestParam Long courierId,
             @RequestParam Long orderId
     ) {
-      orderService.approveAnOffer(courierId, orderId);
-      return ResponseEntity.ok().build();
+        orderService.approveAnOffer(courierId, orderId);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/cancel")

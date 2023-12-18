@@ -1,10 +1,10 @@
 package com.vention.delivvacoreservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vention.delivvacoreservice.dto.GeolocationDTO;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
-import com.vention.delivvacoreservice.dto.response.OrderResponseDTO;
 import com.vention.delivvacoreservice.service.OrderService;
+import com.vention.general.lib.dto.response.GeolocationDTO;
+import com.vention.general.lib.dto.response.OrderResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

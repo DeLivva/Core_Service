@@ -2,12 +2,9 @@ package com.vention.delivvacoreservice.service.impl;
 
 import com.vention.delivvacoreservice.domain.Order;
 import com.vention.delivvacoreservice.domain.OrderDestination;
-import com.vention.delivvacoreservice.dto.GeolocationDTO;
 import com.vention.delivvacoreservice.dto.mail.OrderMailDTO;
 import com.vention.delivvacoreservice.dto.mail.Sender;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
-import com.vention.delivvacoreservice.dto.response.OrderResponseDTO;
-import com.vention.delivvacoreservice.dto.response.UserResponseDTO;
 import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
 import com.vention.delivvacoreservice.repository.OrderRepository;
@@ -15,6 +12,9 @@ import com.vention.delivvacoreservice.service.MailService;
 import com.vention.delivvacoreservice.service.OrderDestinationService;
 import com.vention.delivvacoreservice.service.OrderService;
 import com.vention.delivvacoreservice.utils.MapUtils;
+import com.vention.general.lib.dto.response.GeolocationDTO;
+import com.vention.general.lib.dto.response.OrderResponseDTO;
+import com.vention.general.lib.dto.response.UserResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
 import com.vention.general.lib.exceptions.BadRequestException;
 import com.vention.general.lib.exceptions.DataNotFoundException;
@@ -60,21 +60,20 @@ public class OrderServiceImpl implements OrderService {
         order.setStartingDestination(savedStartingPlace);
         order.setFinalDestination(savedFinalPlace);
         Order savedOrder = orderRepository.save(order);
-        OrderResponseDTO orderResponse = orderMapper.mapOrderEntityToResponse(savedOrder);
-        orderResponse.setCostumer(customer);
-        return orderResponse;
+        return convertEntityToResponseDTO(savedOrder);
     }
 
     @Override
-    public OrderStatus getStatus(Long id) {
+    public OrderResponseDTO findById(Long id) {
         var order = getById(id);
-        return order.getStatus();
+        return convertEntityToResponseDTO(order);
     }
 
     @Override
     public void setStatus(Long id, OrderStatus status) {
         var order = getById(id);
         order.setStatus(status);
+        orderRepository.save(order);
     }
 
     @Override
@@ -94,7 +93,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void approveAnOffer(Long courierId, Long orderId) {
         Order order = getById(orderId);
-        if(order.getCourierId() != null) {
+        if (order.getCourierId() != null) {
             throw new BadRequestException("Order has already been assigned to the courier");
         }
         UserResponseDTO courier = authServiceClient.getUserById(courierId);
@@ -106,14 +105,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void rejectAnOrder(Long userId, Long orderId) {
         Order order = getById(orderId);
-        if(Objects.equals(order.getCustomerId(), userId)) {
-            if(order.getStatus() == OrderStatus.CREATED || order.getStatus() == OrderStatus.PICKED_UP) {
+        if (Objects.equals(order.getCustomerId(), userId)) {
+            if (order.getStatus() == OrderStatus.CREATED || order.getStatus() == OrderStatus.PICKED_UP) {
                 order.setStatus(OrderStatus.REJECTED_BY_CUSTOMER);
             } else {
                 throw new BadRequestException("Order cannot be canceled!!!");
             }
-        } else if(Objects.equals(order.getCourierId(), userId)) {
-            if(order.getStatus() == OrderStatus.PICKED_UP) {
+        } else if (Objects.equals(order.getCourierId(), userId)) {
+            if (order.getStatus() == OrderStatus.PICKED_UP) {
                 order.setStatus(OrderStatus.REJECTED_BY_COURIER);
             } else {
                 throw new BadRequestException("Order cannot be canceled!!!");
@@ -135,5 +134,12 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .map(orderMapper::mapOrderEntityToResponse)
                 .toList();
+    }
+
+    private OrderResponseDTO convertEntityToResponseDTO(Order order) {
+        var orderResponseDTO = orderMapper.mapOrderEntityToResponse(order);
+//        orderResponseDTO.setCostumer(userClient.getUserById(order.getCustomerId()));
+//        orderResponseDTO.setCourier(userClient.getUserById(order.getCourierId()));
+        return orderResponseDTO;
     }
 }
