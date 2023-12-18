@@ -5,7 +5,6 @@ import com.vention.delivvacoreservice.domain.OrderDestination;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
 import com.vention.delivvacoreservice.feign_clients.UserClient;
 import com.vention.delivvacoreservice.dto.response.OrderResponseDTO;
-import com.vention.delivvacoreservice.dto.response.UserResponseDTO;
 import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
 import com.vention.delivvacoreservice.repository.OrderRepository;
