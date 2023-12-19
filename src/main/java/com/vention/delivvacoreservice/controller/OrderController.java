@@ -1,8 +1,10 @@
 package com.vention.delivvacoreservice.controller;
 
+import com.vention.delivvacoreservice.dto.OrderOfferDTO;
+import com.vention.delivvacoreservice.dto.OrderStatusDTO;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
-import com.vention.delivvacoreservice.service.OrderService;
 import com.vention.general.lib.dto.response.OrderResponseDTO;
+import com.vention.delivvacoreservice.service.OrderService;
 import com.vention.general.lib.enums.OrderStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -37,44 +38,32 @@ public class OrderController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<Void> setStatus(@PathVariable("id") Long id, OrderStatus status) {
-        orderService.setStatus(id, status);
+    public ResponseEntity<Void> setStatus(@PathVariable("id") Long id, @RequestBody @Valid OrderStatusDTO status) {
+        orderService.setStatus(id, OrderStatus.valueOf(status.getStatus()));
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/offer-by-courier")
-    public ResponseEntity<Void> deliveryOfferByCourier(
-            @RequestParam Long courierId,
-            @RequestParam Long orderId
-    ) {
-        orderService.offerTheDelivery(false, courierId, orderId);
+    @PostMapping("/offer-by-courier")
+    public ResponseEntity<Void> deliveryOfferByCourier(@RequestBody @Valid OrderOfferDTO dto) {
+        orderService.offerTheDelivery(false, dto.getCourierId(), dto.getOrderId());
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/offer-by-customer")
-    public ResponseEntity<Void> deliveryOfferByCustomer(
-            @RequestParam Long courierId,
-            @RequestParam Long orderId
-    ) {
-        orderService.offerTheDelivery(true, courierId, orderId);
+    @PostMapping("/offer-by-customer")
+    public ResponseEntity<Void> deliveryOfferByCustomer(@RequestBody @Valid OrderOfferDTO dto) {
+        orderService.offerTheDelivery(true, dto.getCourierId(), dto.getOrderId());
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/approve-offer")
-    public ResponseEntity<Void> approveAnOffer(
-            @RequestParam Long courierId,
-            @RequestParam Long orderId
-    ) {
-        orderService.approveAnOffer(courierId, orderId);
-        return ResponseEntity.ok().build();
+    @PostMapping("/approve-offer")
+    public ResponseEntity<Void> approveAnOffer(@RequestBody @Valid OrderOfferDTO dto) {
+      orderService.approveAnOffer(dto.getCourierId(), dto.getOrderId());
+      return ResponseEntity.ok().build();
     }
 
     @PostMapping("/cancel")
-    public ResponseEntity<Void> rejectTheOrder(
-            @RequestParam Long userId,
-            @RequestParam Long orderId
-    ) {
-        orderService.rejectAnOrder(userId, orderId);
+    public ResponseEntity<Void> rejectTheOrder(@RequestBody @Valid OrderOfferDTO dto) {
+        orderService.rejectAnOrder(dto.getCourierId(), dto.getOrderId());
         return ResponseEntity.ok().build();
     }
 
