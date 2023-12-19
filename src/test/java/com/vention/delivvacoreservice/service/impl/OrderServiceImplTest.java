@@ -90,7 +90,7 @@ class OrderServiceImplTest {
         verify(request, times(1)).getFinalDestination();
         verify(request, times(1)).getStartingDestination();
         verify(orderDestinationService, times(1)).areDestinationsValid(anyList());
-        verify(authServiceClient, times(1)).getUserById(anyLong());
+        verify(authServiceClient, times(2)).getUserById(anyLong());
         verify(orderDestinationService, times(2)).getOrderDestinationWithValidation(any());
         verify(orderMapper, times(1)).mapOrderRequestToEntity(any());
         verify(trackNumberGenerator, times(1)).generateTrackNumber(any(), any());

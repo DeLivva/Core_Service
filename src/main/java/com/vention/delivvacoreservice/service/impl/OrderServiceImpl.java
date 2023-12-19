@@ -49,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
         if (!orderDestinationService.areDestinationsValid(List.of(startingDestinationDTO, finalDestinationDTO))) {
             throw new BadRequestException("Invalid location data is provided");
         }
-        UserResponseDTO customer = authServiceClient.getUserById(request.getUserId());
+
         OrderDestination savedStartingPlace = orderDestinationService
                 .getOrderDestinationWithValidation(startingDestinationDTO);
         OrderDestination savedFinalPlace = orderDestinationService
@@ -60,22 +60,13 @@ public class OrderServiceImpl implements OrderService {
         order.setStartingDestination(savedStartingPlace);
         order.setFinalDestination(savedFinalPlace);
         Order savedOrder = orderRepository.save(order);
-        OrderResponseDTO response = orderMapper.mapOrderEntityToResponse(savedOrder);
-        response.setCostumer(customer);
-        return response;
+        return convertEntityToResponseDTO(savedOrder);
     }
 
     @Override
     public OrderResponseDTO findById(Long id) {
         var order = getById(id);
-        UserResponseDTO customer = authServiceClient.getUserById(order.getCustomerId());
-        OrderResponseDTO response = orderMapper.mapOrderEntityToResponse(order);
-        response.setCostumer(customer);
-        if(order.getCourierId() != null) {
-            UserResponseDTO courier = authServiceClient.getUserById(order.getCourierId());
-            response.setCourier(courier);
-        }
-        return response;
+        return convertEntityToResponseDTO(order);
     }
 
     @Override
@@ -147,8 +138,10 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderResponseDTO convertEntityToResponseDTO(Order order) {
         var orderResponseDTO = orderMapper.mapOrderEntityToResponse(order);
-//        orderResponseDTO.setCostumer(userClient.getUserById(order.getCustomerId()));
-//        orderResponseDTO.setCourier(userClient.getUserById(order.getCourierId()));
+        orderResponseDTO.setCostumer(authServiceClient.getUserById(order.getCustomerId()));
+        if(order.getCourierId() != null) {
+            orderResponseDTO.setCourier(authServiceClient.getUserById(order.getCourierId()));
+        }
         return orderResponseDTO;
     }
 }
