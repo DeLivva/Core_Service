@@ -60,13 +60,22 @@ public class OrderServiceImpl implements OrderService {
         order.setStartingDestination(savedStartingPlace);
         order.setFinalDestination(savedFinalPlace);
         Order savedOrder = orderRepository.save(order);
-        return convertEntityToResponseDTO(savedOrder);
+        OrderResponseDTO response = orderMapper.mapOrderEntityToResponse(savedOrder);
+        response.setCostumer(customer);
+        return response;
     }
 
     @Override
     public OrderResponseDTO findById(Long id) {
         var order = getById(id);
-        return convertEntityToResponseDTO(order);
+        UserResponseDTO customer = authServiceClient.getUserById(order.getCustomerId());
+        OrderResponseDTO response = orderMapper.mapOrderEntityToResponse(order);
+        response.setCostumer(customer);
+        if(order.getCourierId() != null) {
+            UserResponseDTO courier = authServiceClient.getUserById(order.getCourierId());
+            response.setCourier(courier);
+        }
+        return response;
     }
 
     @Override
@@ -132,7 +141,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponseDTO> getOrderList() {
         return orderRepository.findAllByStatus()
                 .stream()
-                .map(orderMapper::mapOrderEntityToResponse)
+                .map(order -> findById(order.getId()))
                 .toList();
     }
 
