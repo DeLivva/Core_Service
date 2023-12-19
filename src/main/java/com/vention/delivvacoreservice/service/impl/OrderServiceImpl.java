@@ -138,8 +138,8 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderResponseDTO convertEntityToResponseDTO(Order order) {
         var orderResponseDTO = orderMapper.mapOrderEntityToResponse(order);
-//        orderResponseDTO.setCostumer(userClient.getUserById(order.getCustomerId()));
-//        orderResponseDTO.setCourier(userClient.getUserById(order.getCourierId()));
+        orderResponseDTO.setCostumer(authServiceClient.getUserById(order.getCustomerId()));
+        orderResponseDTO.setCourier(authServiceClient.getUserById(order.getCourierId()));
         return orderResponseDTO;
     }
 }
