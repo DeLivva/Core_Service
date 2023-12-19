@@ -132,14 +132,16 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponseDTO> getOrderList() {
         return orderRepository.findAllByStatus()
                 .stream()
-                .map(orderMapper::mapOrderEntityToResponse)
+                .map(order -> findById(order.getId()))
                 .toList();
     }
 
     private OrderResponseDTO convertEntityToResponseDTO(Order order) {
         var orderResponseDTO = orderMapper.mapOrderEntityToResponse(order);
         orderResponseDTO.setCostumer(authServiceClient.getUserById(order.getCustomerId()));
-        orderResponseDTO.setCourier(authServiceClient.getUserById(order.getCourierId()));
+        if(order.getCourierId() != null) {
+            orderResponseDTO.setCourier(authServiceClient.getUserById(order.getCourierId()));
+        }
         return orderResponseDTO;
     }
 }
