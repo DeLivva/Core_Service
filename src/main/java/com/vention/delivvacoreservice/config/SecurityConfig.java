@@ -60,9 +60,11 @@ public class SecurityConfig {
 
         @Override
         public boolean matches(HttpServletRequest request) {
-            String clientDomain = request.getServerName().toLowerCase();
+            String clientDomain = request.getHeader("host");
+            var serverName = request.getServerName();
+            System.out.println("CLIENT_SERVER: " + serverName);
             System.out.println("CLIENT_IP: " + request.getRemoteAddr());
-            System.out.println("CLIENT_DOMAIN: " + clientDomain);
+            System.out.println("CLIENT_HOST: " + clientDomain);
             return authorizedDomains.stream()
                     .anyMatch(clientDomain::contains);
         }
