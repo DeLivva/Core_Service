@@ -15,6 +15,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+import java.util.Objects;
 
 @Configuration
 @EnableWebSecurity
@@ -59,13 +60,13 @@ public class SecurityConfig {
 
         @Override
         public boolean matches(HttpServletRequest request) {
-            String clientDomain = request.getHeader("host");
-            var serverName = request.getServerName();
-            System.out.println("CLIENT_SERVER: " + serverName);
-            System.out.println("CLIENT_IP: " + request.getRemoteAddr());
-            System.out.println("CLIENT_HOST: " + clientDomain);
-            return authorizedDomains.stream()
-                    .anyMatch(clientDomain::contains);
+            String clientDomain = request.getHeader("source");
+            if (Objects.nonNull(clientDomain)) {
+                System.out.println("CLIENT_HOST: " + clientDomain);
+                return authorizedDomains.stream()
+                        .anyMatch(clientDomain::contains);
+            }
+            return false;
         }
     }
 }
