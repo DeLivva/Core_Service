@@ -1,5 +1,6 @@
 package com.vention.delivvacoreservice.feign_clients;
 
+import com.vention.delivvacoreservice.config.CustomErrorDecoder;
 import com.vention.delivvacoreservice.dto.request.DisputeCreateRequestDTO;
 import com.vention.delivvacoreservice.dto.response.DisputeResponseDTO;
 import com.vention.delivvacoreservice.dto.response.DisputeTypeResponseDTO;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "disputeServiceApi", url = "${cloud.dispute-service.url}")
+@FeignClient(name = "disputeServiceApi", url = "${cloud.dispute-service.url}", configuration = CustomErrorDecoder.class)
 public interface DisputeClient {
 
     @PostMapping("/api/v1/disputes")
@@ -29,7 +30,7 @@ public interface DisputeClient {
     ResponseEntity<List<DisputeResponseDTO>> getByUserId(@RequestParam Long userId);
 
     @GetMapping("/api/v1/disputes/all")
-    ResponseEntity<ResponseWithPaginationDTO<DisputeResponseDTO>> getAll(PaginationRequestDTO paginationRequestDTO);
+    ResponseEntity<ResponseWithPaginationDTO<DisputeResponseDTO>> getAll(@RequestParam PaginationRequestDTO paginationRequestDTO);
 
     @GetMapping("/api/v1/dispute-types")
     ResponseEntity<List<DisputeTypeResponseDTO>> getAllTypes();
