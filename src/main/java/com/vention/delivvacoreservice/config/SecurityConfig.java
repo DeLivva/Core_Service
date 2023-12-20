@@ -24,8 +24,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtFilter;
 
     private static final List<String> AUTHORIZED_DOMAINS = List.of(
-            "delivva-dispute-env.eba-chhhwrqq.eu-north-1.elasticbeanstalk",
-            "localhost"
+            "delivva-dispute-env.eba-chhhwrqq.eu-north-1.elasticbeanstalk"
     );
 
     @Bean
