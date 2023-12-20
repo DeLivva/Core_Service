@@ -15,7 +15,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
-import java.util.Locale;
 
 @Configuration
 @EnableWebSecurity
@@ -25,7 +24,8 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtFilter;
 
     private static final List<String> AUTHORIZED_DOMAINS = List.of(
-            "delivva-dispute-env.eba-chhhwrqq.eu-north-1.elasticbeanstalk"
+            "delivva-dispute-env.eba-chhhwrqq.eu-north-1.elasticbeanstalk",
+            "localhost"
     );
 
     @Bean
@@ -61,6 +61,7 @@ public class SecurityConfig {
         @Override
         public boolean matches(HttpServletRequest request) {
             String clientDomain = request.getServerName().toLowerCase();
+            System.out.println("IP: " + request.getRemoteAddr());
             System.out.println("DOMAIN: " + clientDomain);
             return authorizedDomains.stream()
                     .anyMatch(clientDomain::contains);
