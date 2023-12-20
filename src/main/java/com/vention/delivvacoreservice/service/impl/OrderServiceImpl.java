@@ -5,7 +5,6 @@ import com.vention.delivvacoreservice.domain.OrderDestination;
 import com.vention.delivvacoreservice.dto.mail.OrderMailDTO;
 import com.vention.delivvacoreservice.dto.mail.Sender;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
-import com.vention.general.lib.dto.response.UserResponseDTO;
 import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
 import com.vention.delivvacoreservice.repository.OrderRepository;
@@ -15,6 +14,7 @@ import com.vention.delivvacoreservice.service.OrderService;
 import com.vention.delivvacoreservice.utils.MapUtils;
 import com.vention.general.lib.dto.response.GeolocationDTO;
 import com.vention.general.lib.dto.response.OrderResponseDTO;
+import com.vention.general.lib.dto.response.UserResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
 import com.vention.general.lib.exceptions.BadRequestException;
 import com.vention.general.lib.exceptions.DataNotFoundException;
@@ -139,7 +139,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderResponseDTO convertEntityToResponseDTO(Order order) {
         var orderResponseDTO = orderMapper.mapOrderEntityToResponse(order);
         orderResponseDTO.setCostumer(authServiceClient.getUserById(order.getCustomerId()));
-        if(order.getCourierId() != null) {
+        if (order.getCourierId() != null) {
             orderResponseDTO.setCourier(authServiceClient.getUserById(order.getCourierId()));
         }
         return orderResponseDTO;
