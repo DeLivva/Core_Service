@@ -20,4 +20,6 @@ public class OrderDestination extends BaseEntity {
 
     @Column(nullable = false)
     private Double latitude;
+
+    private String city;
 }
