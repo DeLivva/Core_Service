@@ -5,6 +5,8 @@ import com.vention.delivvacoreservice.domain.OrderDestination;
 import com.vention.delivvacoreservice.dto.mail.OrderMailDTO;
 import com.vention.delivvacoreservice.dto.mail.Sender;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
+import com.vention.delivvacoreservice.service.GeoCodingService;
+import com.vention.general.lib.dto.response.UserResponseDTO;
 import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
 import com.vention.delivvacoreservice.repository.OrderRepository;
@@ -14,17 +16,23 @@ import com.vention.delivvacoreservice.service.OrderService;
 import com.vention.delivvacoreservice.utils.MapUtils;
 import com.vention.general.lib.dto.response.GeolocationDTO;
 import com.vention.general.lib.dto.response.OrderResponseDTO;
-import com.vention.general.lib.dto.response.UserResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
 import com.vention.general.lib.exceptions.BadRequestException;
 import com.vention.general.lib.exceptions.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static com.vention.general.lib.utils.DateUtils.convertStringToTimestamp;
 
@@ -40,6 +48,7 @@ public class OrderServiceImpl implements OrderService {
     private final TrackNumberGenerator trackNumberGenerator;
     private final OrderDestinationService orderDestinationService;
     private final OrderRepository orderRepository;
+    private final GeoCodingService geoCodingService;
 
     @Override
     @Transactional
@@ -57,7 +66,11 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderMapper.mapOrderRequestToEntity(request);
         order.setDeliveryDate(convertStringToTimestamp(request.getScheduledDeliveryDate()));
         order.setTrackNumber(trackNumberGenerator.generateTrackNumber(savedStartingPlace, savedFinalPlace));
+        String startingCity = geoCodingService.getCityName(request.getStartingDestination().getLatitude(), request.getStartingDestination().getLongitude());
+        savedStartingPlace.setCity(startingCity);
         order.setStartingDestination(savedStartingPlace);
+        String finalCity = geoCodingService.getCityName(request.getFinalDestination().getLatitude(), request.getFinalDestination().getLongitude());
+        savedFinalPlace.setCity(finalCity);
         order.setFinalDestination(savedFinalPlace);
         Order savedOrder = orderRepository.save(order);
         return convertEntityToResponseDTO(savedOrder);
@@ -134,6 +147,46 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .map(order -> findById(order.getId()))
                 .toList();
+    }
+
+    @Override
+    public ResponseEntity<List<OrderResponseDTO>> getByFilter(int page, int size, String startPoint, String endPoint, Date date) {
+        Pageable pageable = PageRequest.of(page, size);
+        if (startPoint != null) {
+            return getOrdersByStartingPoint(startPoint, pageable);
+        }
+        if (endPoint != null) {
+            return getOrdersByEndingPoint(endPoint, pageable);
+        }
+        if (date != null) {
+            Timestamp timestampParam = new Timestamp(date.getTime());
+            return getOrdersByDate(timestampParam, pageable);
+        }
+        throw new BadRequestException("Invalid filter parameters. Please provide either a valid startPoint, endPoint, or date.");
+    }
+
+    private ResponseEntity<List<OrderResponseDTO>> getOrdersByCriteria(
+            Function<Pageable, Page<Order>> queryFunction,
+            Pageable pageable
+    ) {
+        List<OrderResponseDTO> orderResponseDTOs = queryFunction.apply(pageable)
+                .getContent()
+                .stream()
+                .map(this::convertEntityToResponseDTO)
+                .toList();
+        return ResponseEntity.ok(orderResponseDTOs);
+    }
+
+    private ResponseEntity<List<OrderResponseDTO>> getOrdersByStartingPoint(String startPoint, Pageable pageable) {
+        return getOrdersByCriteria(pageableParam -> orderRepository.getByStartingPoint(startPoint, pageableParam), pageable);
+    }
+
+    private ResponseEntity<List<OrderResponseDTO>> getOrdersByEndingPoint(String endPoint, Pageable pageable) {
+        return getOrdersByCriteria(pageableParam -> orderRepository.getByEndingPoint(endPoint, pageableParam), pageable);
+    }
+
+    private ResponseEntity<List<OrderResponseDTO>> getOrdersByDate(Timestamp date, Pageable pageable) {
+        return getOrdersByCriteria(pageableParam -> orderRepository.getByDate(date, pageableParam), pageable);
     }
 
     private OrderResponseDTO convertEntityToResponseDTO(Order order) {
