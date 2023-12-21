@@ -16,12 +16,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("select o from orders o where o.status = 'CREATED' or o.status = 'REJECTED_BY_COURIER'")
     List<Order> findAllByStatus();
 
-    @Query("SELECT o FROM orders o where o.startingDestination.city = :city and (o.status = 'CREATED' or o.status = 'REJECTED_BY_COURIER')")
+    @Query("select o from orders o where o.startingDestination.city = :city and (o.status = 'CREATED' or o.status = 'REJECTED_BY_COURIER')")
     Page<Order> getByStartingPoint(String city, Pageable pageable);
 
-    @Query("SELECT o FROM orders o where o.finalDestination.city = :city and (o.status = 'CREATED' or o.status = 'REJECTED_BY_COURIER')")
+    @Query("select o from orders o where o.finalDestination.city = :city and (o.status = 'CREATED' or o.status = 'REJECTED_BY_COURIER')")
     Page<Order> getByEndingPoint(String city, Pageable pageable);
 
-    @Query("SELECT o FROM orders o where o.deliveryDate >= :date and (o.status = 'CREATED' or o.status = 'REJECTED_BY_COURIER')")
+    @Query("select o from orders o where o.deliveryDate >= :date and (o.status = 'CREATED' or o.status = 'REJECTED_BY_COURIER')")
     Page<Order> getByDate(Timestamp date, Pageable pageable);
 }

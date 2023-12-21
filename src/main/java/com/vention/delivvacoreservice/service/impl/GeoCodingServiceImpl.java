@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.vention.delivvacoreservice.service.GeoCodingService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +49,7 @@ public class GeoCodingServiceImpl implements GeoCodingService {
                 // Parse JSON response to get city name
                 return parseCityFromGoogleJson(jsonString);
             } else {
-                System.out.println("HTTP error code: " + responseCode);
+                log.error("HTTP error code: " + responseCode);
             }
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -56,7 +57,7 @@ public class GeoCodingServiceImpl implements GeoCodingService {
         return null;
     }
 
-    private static String parseCityFromGoogleJson(String jsonString) {
+    private String parseCityFromGoogleJson(String jsonString) {
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
         JsonArray results = jsonObject.getAsJsonArray("results");
 
@@ -71,9 +72,10 @@ public class GeoCodingServiceImpl implements GeoCodingService {
                 // Check for different types that might indicate the city
                 for (int j = 0; j < types.size(); j++) {
                     JsonElement type = types.get(j);
-                    if (type.getAsString().equals("locality") || type.getAsString().equals("postal_town") || type.getAsString().equals("administrative_area_level_1")) {
+                    if (StringUtils.equalsAny(type.getAsString(), "locality", "postal_town", "administrative_area_level_1")) {
                         return component.getAsJsonPrimitive("long_name").getAsString();
                     }
+
                 }
             }
 
