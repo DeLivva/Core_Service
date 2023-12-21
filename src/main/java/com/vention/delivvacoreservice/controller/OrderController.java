@@ -75,7 +75,7 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderList());
     }
 
-    @GetMapping("/order-filter")
+    @GetMapping
     public ResponseEntity<List<OrderResponseDTO>> filter(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int size,
