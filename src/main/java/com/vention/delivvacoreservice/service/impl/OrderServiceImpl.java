@@ -21,6 +21,7 @@ import com.vention.general.lib.exceptions.BadRequestException;
 import com.vention.general.lib.exceptions.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static com.vention.general.lib.utils.DateUtils.convertStringToTimestamp;
 
@@ -163,31 +165,28 @@ public class OrderServiceImpl implements OrderService {
         throw new BadRequestException("Invalid filter parameters. Please provide either a valid startPoint, endPoint, or date.");
     }
 
-    private ResponseEntity<List<OrderResponseDTO>> getOrdersByStartingPoint(String startPoint, Pageable pageable) {
-        List<OrderResponseDTO> orderResponseDTOs = orderRepository.getByStartingPoint(startPoint, pageable)
+    private ResponseEntity<List<OrderResponseDTO>> getOrdersByCriteria(
+            Function<Pageable, Page<Order>> queryFunction,
+            Pageable pageable
+    ) {
+        List<OrderResponseDTO> orderResponseDTOs = queryFunction.apply(pageable)
                 .getContent()
                 .stream()
                 .map(this::convertEntityToResponseDTO)
                 .toList();
         return ResponseEntity.ok(orderResponseDTOs);
+    }
+
+    private ResponseEntity<List<OrderResponseDTO>> getOrdersByStartingPoint(String startPoint, Pageable pageable) {
+        return getOrdersByCriteria(pageableParam -> orderRepository.getByStartingPoint(startPoint, pageableParam), pageable);
     }
 
     private ResponseEntity<List<OrderResponseDTO>> getOrdersByEndingPoint(String endPoint, Pageable pageable) {
-        List<OrderResponseDTO> orderResponseDTOs = orderRepository.getByEndingPoint(endPoint, pageable)
-                .getContent()
-                .stream()
-                .map(this::convertEntityToResponseDTO)
-                .toList();
-        return ResponseEntity.ok(orderResponseDTOs);
+        return getOrdersByCriteria(pageableParam -> orderRepository.getByEndingPoint(endPoint, pageableParam), pageable);
     }
 
     private ResponseEntity<List<OrderResponseDTO>> getOrdersByDate(Timestamp date, Pageable pageable) {
-        List<OrderResponseDTO> orderResponseDTOs = orderRepository.getByDate(date, pageable)
-                .getContent()
-                .stream()
-                .map(this::convertEntityToResponseDTO)
-                .toList();
-        return ResponseEntity.ok(orderResponseDTOs);
+        return getOrdersByCriteria(pageableParam -> orderRepository.getByDate(date, pageableParam), pageable);
     }
 
     private OrderResponseDTO convertEntityToResponseDTO(Order order) {
