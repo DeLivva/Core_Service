@@ -25,7 +25,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtFilter;
 
     private static final List<String> AUTHORIZED_DOMAINS = List.of(
-            "delivva-dispute-env.eba-chhhwrqq.eu-north-1.elasticbeanstalk"
+            "delivva-dispute-env.eba-chhhwrqq.eu-north-1.elasticbeanstalk.com"
     );
 
     @Bean
@@ -62,9 +62,8 @@ public class SecurityConfig {
         public boolean matches(HttpServletRequest request) {
             String clientDomain = request.getHeader("source");
             if (Objects.nonNull(clientDomain)) {
-                System.out.println("CLIENT_HOST: " + clientDomain);
                 return authorizedDomains.stream()
-                        .anyMatch(clientDomain::contains);
+                        .anyMatch(clientDomain::equals);
             }
             return false;
         }
