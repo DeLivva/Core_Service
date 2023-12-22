@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -25,13 +26,14 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtFilter;
 
     private static final List<String> AUTHORIZED_DOMAINS = List.of(
-            "delivva-dispute-env.eba-chhhwrqq.eu-north-1.elasticbeanstalk"
+            "delivva-dispute-env.eba-chhhwrqq.eu-north-1.elasticbeanstalk.com"
     );
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(new IpRequestMatcher()).permitAll()
                         .anyRequest().hasAnyRole("ADMIN", "USER")
@@ -62,9 +64,8 @@ public class SecurityConfig {
         public boolean matches(HttpServletRequest request) {
             String clientDomain = request.getHeader("source");
             if (Objects.nonNull(clientDomain)) {
-                System.out.println("CLIENT_HOST: " + clientDomain);
                 return authorizedDomains.stream()
-                        .anyMatch(clientDomain::contains);
+                        .anyMatch(clientDomain::equals);
             }
             return false;
         }

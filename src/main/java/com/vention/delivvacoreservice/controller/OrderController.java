@@ -3,8 +3,8 @@ package com.vention.delivvacoreservice.controller;
 import com.vention.delivvacoreservice.dto.OrderOfferDTO;
 import com.vention.delivvacoreservice.dto.OrderStatusDTO;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
-import com.vention.general.lib.dto.response.OrderResponseDTO;
 import com.vention.delivvacoreservice.service.OrderService;
+import com.vention.general.lib.dto.response.OrderResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +40,10 @@ public class OrderController {
         return ResponseEntity.ok(orderService.findById(id));
     }
 
-    @PutMapping("/{id}/status")
-    public ResponseEntity<Void> setStatus(@PathVariable("id") Long id, @RequestBody @Valid OrderStatusDTO status) {
-        orderService.setStatus(id, OrderStatus.valueOf(status.getStatus()));
-        return ResponseEntity.ok().build();
+    @PutMapping("/status")
+    public ResponseEntity<Void> setStatus(@RequestBody @Valid OrderStatusDTO status) {
+        orderService.setStatus(status.getId(), OrderStatus.valueOf(status.getStatus()));
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/offer-by-courier")
@@ -60,8 +60,8 @@ public class OrderController {
 
     @PostMapping("/approve-offer")
     public ResponseEntity<Void> approveAnOffer(@RequestBody @Valid OrderOfferDTO dto) {
-      orderService.approveAnOffer(dto.getCourierId(), dto.getOrderId());
-      return ResponseEntity.ok().build();
+        orderService.approveAnOffer(dto.getCourierId(), dto.getOrderId());
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/cancel")
