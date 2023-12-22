@@ -40,7 +40,7 @@ public class OrderController {
         return ResponseEntity.ok(orderService.findById(id));
     }
 
-    @GetMapping("/status")
+    @PutMapping("/status")
     public ResponseEntity<Void> setStatus(@RequestBody @Valid OrderStatusDTO status) {
         orderService.setStatus(status.getId(), OrderStatus.valueOf(status.getStatus()));
         return new ResponseEntity<>(HttpStatus.CREATED);
