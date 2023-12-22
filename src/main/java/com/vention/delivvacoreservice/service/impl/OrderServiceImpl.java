@@ -32,6 +32,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static com.vention.general.lib.utils.DateUtils.convertStringToTimestamp;
@@ -163,6 +164,15 @@ public class OrderServiceImpl implements OrderService {
             return getOrdersByDate(timestampParam, pageable);
         }
         throw new BadRequestException("Invalid filter parameters. Please provide either a valid startPoint, endPoint, or date.");
+    }
+
+    @Override
+    public Order getOrderByCustomerId(Long customerId, Long orderId) {
+        Optional<Order> order = orderRepository.findByCustomerIdAndId(customerId, orderId);
+        if(order.isEmpty()){
+            throw new BadRequestException("Access denied");
+        }
+        return order.get();
     }
 
     private ResponseEntity<List<OrderResponseDTO>> getOrdersByCriteria(
