@@ -10,10 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.notNull;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -30,13 +27,13 @@ class TrackNumberGeneratorTest {
 
     @BeforeEach
     void setUp() {
-        destination = new OrderDestination(12345D, 2345D);
+        destination = new OrderDestination(12345D, 2345D, "city");
     }
 
     @Test
     void testGenerateTrackNumber() {
         // given
-        OrderDestination finalPlace = new OrderDestination(23453D, 45343D);
+        OrderDestination finalPlace = new OrderDestination(23453D, 45343D, "city");
         String trackNumber = trackNumberGenerator.generateTrackNumber(destination, finalPlace);
         // then
         Assertions.assertNotNull(trackNumber);

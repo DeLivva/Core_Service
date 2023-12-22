@@ -7,6 +7,7 @@ import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
 import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
 import com.vention.delivvacoreservice.repository.OrderRepository;
+import com.vention.delivvacoreservice.service.GeoCodingService;
 import com.vention.delivvacoreservice.service.MailService;
 import com.vention.delivvacoreservice.service.OrderDestinationService;
 import com.vention.delivvacoreservice.utils.MapUtils;
@@ -61,6 +62,9 @@ class OrderServiceImplTest {
     @Mock
     private OrderCreationRequestDTO request;
 
+    @Mock
+    private GeoCodingService geoCodingService;
+
     @Test
     void testCreateOrder() {
         // given
@@ -87,8 +91,8 @@ class OrderServiceImplTest {
         OrderResponseDTO result = orderService.createOrder(request);
         // then
         assertSame(responseDTO, result);
-        verify(request, times(1)).getFinalDestination();
-        verify(request, times(1)).getStartingDestination();
+        verify(request, times(3)).getFinalDestination();
+        verify(request, times(3)).getStartingDestination();
         verify(orderDestinationService, times(1)).areDestinationsValid(anyList());
         verify(authServiceClient, times(2)).getUserById(anyLong());
         verify(orderDestinationService, times(2)).getOrderDestinationWithValidation(any());

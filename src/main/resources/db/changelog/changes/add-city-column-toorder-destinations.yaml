@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      author: Hasilbek
+      id: 4
+      changes:
+        - addColumn:
+            tableName: order_destinations
+            columns:
+              - column:
+                  name: city
+                  type: varchar(255)

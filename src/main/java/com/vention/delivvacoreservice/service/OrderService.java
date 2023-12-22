@@ -4,7 +4,9 @@ import com.vention.delivvacoreservice.domain.Order;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
 import com.vention.general.lib.dto.response.OrderResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
+import org.springframework.http.ResponseEntity;
 
+import java.util.Date;
 import java.util.List;
 
 public interface OrderService {
@@ -24,4 +26,6 @@ public interface OrderService {
     Order getById(Long orderId);
 
     List<OrderResponseDTO> getOrderList();
+
+    ResponseEntity<List<OrderResponseDTO>> getByFilter(int page, int size, String startPoint, String endPoint, Date date);
 }
