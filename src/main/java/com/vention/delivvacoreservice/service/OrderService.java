@@ -28,4 +28,6 @@ public interface OrderService {
     List<OrderResponseDTO> getOrderList();
 
     ResponseEntity<List<OrderResponseDTO>> getByFilter(int page, int size, String startPoint, String endPoint, Date date);
+
+    Order getOrderByCustomerId(Long customerId, Long orderId);
 }
