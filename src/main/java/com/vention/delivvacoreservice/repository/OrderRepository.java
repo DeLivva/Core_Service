@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -24,4 +25,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("select o from orders o where o.deliveryDate >= :date and (o.status = 'CREATED' or o.status = 'REJECTED_BY_COURIER')")
     Page<Order> getByDate(Timestamp date, Pageable pageable);
+
+    Optional<Order> findByCustomerIdAndId(Long customerId, Long orderId);
 }
