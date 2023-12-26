@@ -37,7 +37,8 @@ cloud:
     url: http://Delivva-testing-environment-env.eba-jighrhr6.us-east-1.elasticbeanstalk.com
   dispute-service:
     url: http://Delivva-dispute-env.eba-chhhwrqq.eu-north-1.elasticbeanstalk.com
-
+  geo-service:
+    url: http://ec2-51-20-56-164.eu-north-1.compute.amazonaws.com:5000
 jwt:
   secret-key: 753778214125442A472IkphdZSIsImasV4cCIee6MTY4sdNzUwMTQwN3F452848567890iuyiu67567886578uyutuio78654678976549eyJS678965467uior678545
 
