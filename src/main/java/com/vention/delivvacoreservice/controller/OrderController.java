@@ -1,6 +1,8 @@
 package com.vention.delivvacoreservice.controller;
 
 import com.vention.delivvacoreservice.dto.OrderOfferDTO;
+import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
+import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
 import com.vention.delivvacoreservice.dto.OrderStatusDTO;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
 import com.vention.delivvacoreservice.service.OrderService;
@@ -8,7 +10,6 @@ import com.vention.general.lib.dto.response.OrderResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -70,22 +70,22 @@ public class OrderController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/get-orders")
-    public ResponseEntity<List<OrderResponseDTO>> getOrderList() {
-        return ResponseEntity.ok(orderService.getOrderList());
-    }
-
     @GetMapping
     public ResponseEntity<List<OrderResponseDTO>> filter(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int size,
-            @RequestParam(required = false) String startPoint,
-            @RequestParam(required = false) String endPoint,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") Date date
-    ) {
-        if (page != 0) {
-            page = page - 1;
-        }
-        return orderService.getByFilter(page, size, startPoint, endPoint, date);
+            OrderFilterDto filterDto
+            ) {
+        return ResponseEntity.ok(orderService.getByFilter(page, size, filterDto));
+    }
+
+    @GetMapping("/get-active-orders")
+    public ResponseEntity<List<OrderResponseDTO>> getActiveOrders(OrderParticipantsDto dto){
+        return ResponseEntity.ok(orderService.getActiveOrders(dto));
+    }
+
+    @GetMapping("/get-history-orders")
+    public ResponseEntity<List<OrderResponseDTO>> getHistoryOrders(OrderParticipantsDto dto){
+        return ResponseEntity.ok(orderService.getHistoryOrders(dto));
     }
 }
