@@ -27,6 +27,9 @@ public interface DisputeClient {
     @PutMapping("/api/v1/disputes/close/{id}")
     ResponseEntity<Void> close(@PathVariable("id") Long id);
 
+    @GetMapping("/api/v1/disputes/{order_id}")
+    ResponseEntity<DisputeResponseDTO> getByOrderId(@PathVariable("order_id") Long userId);
+
     @GetMapping("/api/v1/disputes")
     ResponseEntity<List<DisputeResponseDTO>> getByUserId(@RequestParam Long userId);
 
