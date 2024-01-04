@@ -2,6 +2,8 @@ package com.vention.delivvacoreservice.service.impl;
 
 import com.vention.delivvacoreservice.domain.Order;
 import com.vention.delivvacoreservice.domain.OrderDestination;
+import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
+import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
 import com.vention.delivvacoreservice.dto.mail.OrderMailDTO;
 import com.vention.delivvacoreservice.dto.mail.Sender;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
@@ -24,12 +26,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -143,24 +143,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponseDTO> getOrderList() {
-        return orderRepository.findAllByStatus()
-                .stream()
-                .map(order -> findById(order.getId()))
-                .toList();
-    }
-
-    @Override
-    public ResponseEntity<List<OrderResponseDTO>> getByFilter(int page, int size, String startPoint, String endPoint, Date date) {
+    public List<OrderResponseDTO> getByFilter(int page, int size, OrderFilterDto filterDto) {
         Pageable pageable = PageRequest.of(page, size);
-        if (startPoint != null) {
-            return getOrdersByStartingPoint(startPoint, pageable);
+        if (filterDto.getStartPoint() != null) {
+            return getOrdersByStartingPoint(filterDto.getStartPoint(), pageable);
         }
-        if (endPoint != null) {
-            return getOrdersByEndingPoint(endPoint, pageable);
+        if (filterDto.getEndPoint() != null) {
+            return getOrdersByEndingPoint(filterDto.getEndPoint(), pageable);
         }
-        if (date != null) {
-            Timestamp timestampParam = new Timestamp(date.getTime());
+        if (filterDto.getDate() != null) {
+            Timestamp timestampParam = new Timestamp(filterDto.getDate().getTime());
             return getOrdersByDate(timestampParam, pageable);
         }
         throw new BadRequestException("Invalid filter parameters. Please provide either a valid startPoint, endPoint, or date.");
@@ -169,33 +161,68 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order getOrderByCustomerId(Long customerId, Long orderId) {
         Optional<Order> order = orderRepository.findByCustomerIdAndId(customerId, orderId);
-        if(order.isEmpty()){
+        if (order.isEmpty()) {
             throw new BadRequestException("Access denied");
         }
         return order.get();
     }
 
-    private ResponseEntity<List<OrderResponseDTO>> getOrdersByCriteria(
+    @Override
+    public List<OrderResponseDTO> getActiveOrders(OrderParticipantsDto dto) {
+        if (dto.getCustomerId() != null) {
+            return orderRepository.findCustomerActiveOrders(dto.getCustomerId())
+                    .stream()
+                    .map(order -> findById(order.getId()))
+                    .toList();
+        } else if (dto.getCourierId() != null) {
+            return orderRepository.findCourierActiveOrders(dto.getCourierId())
+                    .stream()
+                    .map(order -> findById(order.getId()))
+                    .toList();
+        } else {
+            return orderRepository.findAllByStatus()
+                    .stream()
+                    .map(order -> findById(order.getId()))
+                    .toList();
+        }
+    }
+
+    @Override
+    public List<OrderResponseDTO> getHistoryOrders(OrderParticipantsDto dto) {
+        if (dto.getCustomerId() != null) {
+            return orderRepository.findCustomerHistoryOrders(dto.getCustomerId())
+                    .stream()
+                    .map(order -> findById(order.getId()))
+                    .toList();
+        } else if (dto.getCourierId() != null) {
+            return orderRepository.findCourierHistoryOrders(dto.getCourierId())
+                    .stream()
+                    .map(order -> findById(order.getId()))
+                    .toList();
+        }
+        throw new BadRequestException("Invalid request");
+    }
+
+    private List<OrderResponseDTO> getOrdersByCriteria(
             Function<Pageable, Page<Order>> queryFunction,
             Pageable pageable
     ) {
-        List<OrderResponseDTO> orderResponseDTOs = queryFunction.apply(pageable)
+        return queryFunction.apply(pageable)
                 .getContent()
                 .stream()
                 .map(this::convertEntityToResponseDTO)
                 .toList();
-        return ResponseEntity.ok(orderResponseDTOs);
     }
 
-    private ResponseEntity<List<OrderResponseDTO>> getOrdersByStartingPoint(String startPoint, Pageable pageable) {
+    private List<OrderResponseDTO> getOrdersByStartingPoint(String startPoint, Pageable pageable) {
         return getOrdersByCriteria(pageableParam -> orderRepository.getByStartingPoint(startPoint, pageableParam), pageable);
     }
 
-    private ResponseEntity<List<OrderResponseDTO>> getOrdersByEndingPoint(String endPoint, Pageable pageable) {
+    private List<OrderResponseDTO> getOrdersByEndingPoint(String endPoint, Pageable pageable) {
         return getOrdersByCriteria(pageableParam -> orderRepository.getByEndingPoint(endPoint, pageableParam), pageable);
     }
 
-    private ResponseEntity<List<OrderResponseDTO>> getOrdersByDate(Timestamp date, Pageable pageable) {
+    private List<OrderResponseDTO> getOrdersByDate(Timestamp date, Pageable pageable) {
         return getOrdersByCriteria(pageableParam -> orderRepository.getByDate(date, pageableParam), pageable);
     }
 

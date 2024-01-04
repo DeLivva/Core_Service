@@ -28,4 +28,15 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Optional<Order> findByCustomerIdAndId(Long customerId, Long orderId);
 
+    @Query("select o from orders o where o.customerId = :customerId and o.status <> 'REJECTED_BY_CUSTOMER' and o.status <> 'DONE' order by o.createdAt desc")
+    List<Order> findCustomerActiveOrders(Long customerId);
+
+    @Query("select o from orders o where o.courierId = :courierId and o.status <> 'REJECTED_BY_CUSTOMER' and o.status <> 'DONE' order by o.createdAt desc")
+    List<Order> findCourierActiveOrders(Long courierId);
+
+    @Query("select o from orders o where o.customerId = :customerId and (o.status = 'REJECTED_BY_CUSTOMER' or o.status = 'DONE') order by o.createdAt desc")
+    List<Order> findCustomerHistoryOrders(Long customerId);
+
+    @Query("select o from orders o where o.courierId = :courierId and o.status = 'DONE' order by o.createdAt desc")
+    List<Order> findCourierHistoryOrders(Long courierId);
 }
