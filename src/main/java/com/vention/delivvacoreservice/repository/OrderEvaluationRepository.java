@@ -16,4 +16,6 @@ public interface OrderEvaluationRepository extends JpaRepository<OrderEvaluation
 
     @Query("select o.courierId as courierId, avg(e.rate) as rating, count(o) as quantity from order_evaluations e join e.order o group by o.courierId order by rating desc")
     Page<Object[]> couriers(Pageable pageable);
+
+
 }

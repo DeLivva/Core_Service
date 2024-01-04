@@ -3,9 +3,11 @@ package com.vention.delivvacoreservice.service.impl;
 import com.vention.delivvacoreservice.domain.Order;
 import com.vention.delivvacoreservice.dto.request.OrderEvaluationDto;
 import com.vention.delivvacoreservice.dto.response.CourierRatingResponseDto;
+import com.vention.delivvacoreservice.dto.response.CourierResponseDTO;
 import com.vention.delivvacoreservice.dto.response.OrderEvaluationResponseDto;
 import com.vention.delivvacoreservice.mappers.OrderEvaluationMapper;
 import com.vention.delivvacoreservice.repository.OrderEvaluationRepository;
+import com.vention.delivvacoreservice.repository.OrderRepository;
 import com.vention.delivvacoreservice.service.OrderEvaluationService;
 import com.vention.delivvacoreservice.service.OrderService;
 import com.vention.general.lib.exceptions.BadRequestException;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -24,6 +27,7 @@ public class OrderEvaluationServiceImpl implements OrderEvaluationService {
     private final OrderEvaluationRepository orderEvaluationRepository;
     private final OrderEvaluationMapper mapper;
     private final OrderService orderService;
+    private final OrderRepository orderRepository;
 
     @Override
     public OrderEvaluationResponseDto create(OrderEvaluationDto orderEvaluationDto) {
@@ -45,6 +49,15 @@ public class OrderEvaluationServiceImpl implements OrderEvaluationService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Object[]> couriers = orderEvaluationRepository.couriers(pageable);
         return convertToDto(couriers);
+    }
+
+    @Override
+    public List<CourierResponseDTO> filterAndSortCouriers(List<CourierResponseDTO> couriers) {
+        couriers.stream().filter(courier -> {
+            return true;
+        });
+        Collections.sort(couriers);
+        return null;
     }
 
     private List<CourierRatingResponseDto> convertToDto(Page<Object[]> resultList) {
