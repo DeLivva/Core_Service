@@ -8,7 +8,6 @@ import com.vention.general.lib.dto.request.PaginationRequestDTO;
 import com.vention.general.lib.dto.response.ResponseWithPaginationDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +25,9 @@ public interface DisputeClient {
 
     @PutMapping("/api/v1/disputes/close/{id}")
     ResponseEntity<Void> close(@PathVariable("id") Long id);
+
+    @GetMapping("/api/v1/disputes/{order_id}")
+    ResponseEntity<DisputeResponseDTO> getByOrderId(@PathVariable("order_id") Long userId);
 
     @GetMapping("/api/v1/disputes")
     ResponseEntity<List<DisputeResponseDTO>> getByUserId(@RequestParam Long userId);

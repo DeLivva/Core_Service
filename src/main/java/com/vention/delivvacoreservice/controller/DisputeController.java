@@ -40,6 +40,11 @@ public class DisputeController {
         return disputeClient.getByUserId(userId);
     }
 
+    @GetMapping("/{order_id}")
+    public ResponseEntity<DisputeResponseDTO> getByOrderId(@PathVariable("order_id") Long userId) {
+        return disputeClient.getByOrderId(userId);
+    }
+
     @GetMapping("/all")
     public ResponseEntity<ResponseWithPaginationDTO<DisputeResponseDTO>> getAll(PaginationRequestDTO paginationRequestDTO) {
         return disputeClient.getAll(paginationRequestDTO);
