@@ -27,4 +27,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> getByDate(Timestamp date, Pageable pageable);
 
     Optional<Order> findByCustomerIdAndId(Long customerId, Long orderId);
+
 }

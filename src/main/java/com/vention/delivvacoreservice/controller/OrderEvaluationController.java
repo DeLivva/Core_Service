@@ -2,6 +2,7 @@ package com.vention.delivvacoreservice.controller;
 
 import com.vention.delivvacoreservice.dto.request.OrderEvaluationDto;
 import com.vention.delivvacoreservice.dto.response.CourierRatingResponseDto;
+import com.vention.delivvacoreservice.dto.response.CourierResponseDTO;
 import com.vention.delivvacoreservice.dto.response.OrderEvaluationResponseDto;
 import com.vention.delivvacoreservice.service.OrderEvaluationService;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -34,5 +37,10 @@ public class OrderEvaluationController {
             @RequestParam(required = false, defaultValue = "10") int size
             ) {
         return ResponseEntity.ok(orderEvaluationService.getCouriers(page, size));
+    }
+
+    @PutMapping("/filter-couriers")
+    public ResponseEntity<List<CourierResponseDTO>> filterAndSortCouriers(@RequestBody List<CourierResponseDTO> couriers) {
+        return ResponseEntity.ok(orderEvaluationService.filterAndSortCouriers(couriers));
     }
 }
