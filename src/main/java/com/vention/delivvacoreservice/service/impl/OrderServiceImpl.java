@@ -88,6 +88,8 @@ public class OrderServiceImpl implements OrderService {
         var order = getById(id);
         order.setStatus(status);
         orderRepository.save(order);
+
+        mailService.sendStatusUpdateNotification(order);
     }
 
     @Override
