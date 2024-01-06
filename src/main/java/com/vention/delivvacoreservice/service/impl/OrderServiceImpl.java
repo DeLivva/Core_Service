@@ -66,13 +66,13 @@ public class OrderServiceImpl implements OrderService {
                 .getOrderDestinationWithValidation(finalDestinationDTO);
         Order order = orderMapper.mapOrderRequestToEntity(request);
         order.setDeliveryDate(convertStringToTimestamp(request.getScheduledDeliveryDate()));
-        order.setTrackNumber(trackNumberGenerator.generateTrackNumber(savedStartingPlace, savedFinalPlace));
         String startingCity = geoCodingService.getCityName(request.getStartingDestination().getLatitude(), request.getStartingDestination().getLongitude());
         savedStartingPlace.setCity(startingCity);
         order.setStartingDestination(savedStartingPlace);
         String finalCity = geoCodingService.getCityName(request.getFinalDestination().getLatitude(), request.getFinalDestination().getLongitude());
         savedFinalPlace.setCity(finalCity);
         order.setFinalDestination(savedFinalPlace);
+        order.setTrackNumber(trackNumberGenerator.generateTrackNumber(startingCity, finalCity));
         Order savedOrder = orderRepository.save(order);
         return convertEntityToResponseDTO(savedOrder);
     }
@@ -101,6 +101,7 @@ public class OrderServiceImpl implements OrderService {
         mailDTO.setStartLocation(mapUtils.getCityNameByCoordinates(order.getStartingDestination()));
         mailDTO.setFinalLocation(mapUtils.getCityNameByCoordinates(order.getFinalDestination()));
         mailDTO.setSender((byCustomer) ? Sender.CUSTOMER : Sender.COURIER);
+        mailDTO.setTrackNumber(order.getTrackNumber());
         mailService.sendAnOffer(mailDTO);
     }
 
@@ -113,7 +114,10 @@ public class OrderServiceImpl implements OrderService {
         UserResponseDTO courier = authServiceClient.getUserById(courierId);
         order.setCourierId(courier.getId());
         order.setStatus(OrderStatus.PICKED_UP);
+
         orderRepository.save(order);
+
+        mailService.sendStatusUpdateNotification(order);
     }
 
     @Override
@@ -133,6 +137,8 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         orderRepository.save(order);
+
+        mailService.sendStatusUpdateNotification(order);
     }
 
     @Override

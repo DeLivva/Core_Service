@@ -26,10 +26,11 @@ spring:
 rabbitmq:
   exchange:
     name: geo_direct_exchange
+    notification: notification_direct_exchange
   routing:
     key:
       geo: geo_service_routing_key
-
+      core: core_service_routing_key
 cloud:
   map:
     url: https://nominatim.openstreetmap.org/reverse
