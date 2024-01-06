@@ -26,11 +26,14 @@ public class MailServiceImpl implements MailService {
     public void sendAnOffer(OrderMailDTO mailDTO) {
         Map<String, Object> data = orderMapper.orderMailDTOToMap(mailDTO);
         String emailTo;
-        if(mailDTO.getSender().equals(Sender.CUSTOMER)){
+        // courierId and customerId added to set id for offer response link
+        if (mailDTO.getSender().equals(Sender.CUSTOMER)) {
             data.put("senderName", mailDTO.getCustomer().getFirstName());
+            data.put("userId", mailDTO.getCourier().getId());
             emailTo = mailDTO.getCourier().getEmail();
         } else {
             data.put("senderName", mailDTO.getCourier().getFirstName());
+            data.put("userId", mailDTO.getCustomer().getId());
             emailTo = mailDTO.getCustomer().getEmail();
         }
         NotificationDTO notificationDTO = NotificationDTO.builder()

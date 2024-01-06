@@ -28,6 +28,7 @@ public interface OrderMapper {
 
     default Map<String, Object> orderMailDTOToMap(OrderMailDTO orderMailDTO) {
         Map<String, Object> map = new HashMap<>();
+        map.put("id", orderMailDTO.getId());
         map.put("startLocation", orderMailDTO.getStartLocation());
         map.put("finalLocation", orderMailDTO.getFinalLocation());
         map.put("deliveryDate", orderMailDTO.getDeliveryDate());

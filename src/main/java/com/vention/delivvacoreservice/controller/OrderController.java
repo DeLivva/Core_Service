@@ -58,15 +58,19 @@ public class OrderController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/approve-offer")
-    public ResponseEntity<Void> approveAnOffer(@RequestBody @Valid OrderOfferDTO dto) {
-        orderService.approveAnOffer(dto.getCourierId(), dto.getOrderId());
+    @GetMapping("/approve-offer")
+    public ResponseEntity<Void> approveAnOffer(
+            @RequestParam Long userId,
+            @RequestParam Long orderId) {
+        orderService.approveAnOffer(userId, orderId);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/cancel")
-    public ResponseEntity<Void> rejectTheOrder(@RequestBody @Valid OrderOfferDTO dto) {
-        orderService.rejectAnOrder(dto.getCourierId(), dto.getOrderId());
+    @GetMapping("/cancel")
+    public ResponseEntity<Void> rejectTheOrder(
+            @RequestParam Long userId,
+            @RequestParam Long orderId) {
+        orderService.rejectAnOrder(userId, orderId);
         return ResponseEntity.ok().build();
     }
 
