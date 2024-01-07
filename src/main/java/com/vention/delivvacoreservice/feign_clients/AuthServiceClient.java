@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @FeignClient(name = "AuthServiceApi", url = "${cloud.auth-service.url}")
 public interface AuthServiceClient {
 
@@ -15,4 +17,7 @@ public interface AuthServiceClient {
 
     @GetMapping("/api/v1/security-credentials")
     UserDetailsDTO getUserByEmail(@RequestParam String email);
+
+    @GetMapping("/api/v1/users/all-ids")
+    List<Long> getUsersIdList(@RequestParam Boolean isCourier);
 }

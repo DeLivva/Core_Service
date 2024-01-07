@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      author: Abbos
+      id: 5
+      changes:
+        - createTable:
+            tableName: order_invitations
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigserial
+                  constraints:
+                    nullable: false
+              - column:
+                  name: from_user_id
+                  type: bigserial
+                  constraints:
+                    nullable: false
+              - column:
+                  name: to_user_id
+                  type: bigserial
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: 'CURRENT_TIMESTAMP'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp

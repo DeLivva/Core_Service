@@ -2,11 +2,14 @@ package com.vention.delivvacoreservice.service.impl;
 
 import com.vention.delivvacoreservice.domain.Order;
 import com.vention.delivvacoreservice.domain.OrderDestination;
+import com.vention.delivvacoreservice.domain.OrderInvitation;
 import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
 import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
 import com.vention.delivvacoreservice.dto.mail.OrderMailDTO;
 import com.vention.delivvacoreservice.dto.mail.Sender;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
+import com.vention.delivvacoreservice.enums.InvitationStatus;
+import com.vention.delivvacoreservice.repository.OrderInvitationsRepository;
 import com.vention.delivvacoreservice.service.GeoCodingService;
 import com.vention.general.lib.dto.response.UserResponseDTO;
 import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
@@ -50,6 +53,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderDestinationService orderDestinationService;
     private final OrderRepository orderRepository;
     private final GeoCodingService geoCodingService;
+    private final OrderInvitationsRepository orderInvitationsRepository;
 
     @Override
     @Transactional
@@ -91,10 +95,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void offerTheDelivery(boolean byCustomer, Long courierId, Long orderId) {
         Order order = getById(orderId);
         UserResponseDTO courier = authServiceClient.getUserById(courierId);
         UserResponseDTO customer = authServiceClient.getUserById(order.getCustomerId());
+
+        OrderInvitation orderInvitation;
+        if (byCustomer) {
+            orderInvitation = new OrderInvitation(customer.getId(), courierId, orderId, InvitationStatus.PENDING);
+        } else {
+            orderInvitation = new OrderInvitation(courierId, customer.getId(), orderId, InvitationStatus.PENDING);
+        }
+        orderInvitationsRepository.save(orderInvitation);
+
         OrderMailDTO mailDTO = orderMapper.mapOrderEntityToOrderMailDTO(order);
         mailDTO.setCourier(courier);
         mailDTO.setCustomer(customer);
@@ -105,11 +119,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void approveAnOffer(Long courierId, Long orderId) {
         Order order = getById(orderId);
         if (order.getCourierId() != null) {
             throw new BadRequestException("Order has already been assigned to the courier");
         }
+        orderInvitationsRepository.approveOrderByCourier(courierId, orderId);
         UserResponseDTO courier = authServiceClient.getUserById(courierId);
         order.setCourierId(courier.getId());
         order.setStatus(OrderStatus.PICKED_UP);
