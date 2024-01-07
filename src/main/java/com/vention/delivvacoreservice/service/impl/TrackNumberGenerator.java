@@ -1,21 +1,20 @@
 package com.vention.delivvacoreservice.service.impl;
 
-import com.vention.delivvacoreservice.domain.OrderDestination;
-import com.vention.delivvacoreservice.utils.MapUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
+import java.util.Random;
 
 @Component
 @RequiredArgsConstructor
 public class TrackNumberGenerator {
 
-    private final MapUtils mapUtils;
+    public String generateTrackNumber(String cityFrom, String cityTo) {
+        return cityFrom.substring(0,3) + generateDigits() + cityTo.substring(0,3);
+    }
 
-    public String generateTrackNumber(OrderDestination from, OrderDestination to) {
-        String startPlace = mapUtils.getPostalCodesByCoordinates(from);
-        String finalPlace = mapUtils.getPostalCodesByCoordinates(to);
-        return startPlace + UUID.randomUUID() + finalPlace;
+    private int generateDigits(){
+        Random random = new Random();
+        return 1000000 + random.nextInt(9000000);
     }
 }

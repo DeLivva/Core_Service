@@ -9,6 +9,9 @@ import com.vention.general.lib.dto.response.OrderResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Mapper
 public interface OrderMapper {
 
@@ -22,4 +25,16 @@ public interface OrderMapper {
     OrderResponseDTO mapOrderEntityToResponse(Order order);
 
     OrderMailDTO mapOrderEntityToOrderMailDTO(Order order);
+
+    default Map<String, Object> orderMailDTOToMap(OrderMailDTO orderMailDTO) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", orderMailDTO.getId());
+        map.put("startLocation", orderMailDTO.getStartLocation());
+        map.put("finalLocation", orderMailDTO.getFinalLocation());
+        map.put("deliveryDate", orderMailDTO.getDeliveryDate());
+        map.put("description", orderMailDTO.getItemDescription());
+        map.put("trackNumber", orderMailDTO.getTrackNumber());
+        map.put("sender", orderMailDTO.getSender());
+        return map;
+    }
 }
