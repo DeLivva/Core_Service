@@ -15,7 +15,7 @@ public class GPTFeignClientConfiguration {
     private static class CustomRequestInterceptor implements RequestInterceptor {
         @Override
         public void apply(RequestTemplate template) {
-            template.header("Authorization", "Bearer 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");
+            template.header("Authorization", "Bearer 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");
         }
     }
 }
