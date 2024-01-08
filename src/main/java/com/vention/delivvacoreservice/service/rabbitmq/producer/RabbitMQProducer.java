@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vention.delivvacoreservice.domain.NotificationType;
 import com.vention.delivvacoreservice.dto.request.GeneralDto;
 import com.vention.delivvacoreservice.dto.request.NotificationDTO;
-import com.vention.delivvacoreservice.dto.request.OrderGeoLocationDto;
+import com.vention.general.lib.dto.GeoPositionInfoDTO;
 import com.vention.general.lib.exceptions.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -36,8 +36,8 @@ public class RabbitMQProducer {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger log = LoggerFactory.getLogger(RabbitMQProducer.class);
 
-    public void sendGeoPosition(OrderGeoLocationDto geolocationDTO) {
-        sendNotification(geolocationDTO, NotificationType.GEO_POSITION, exchange, routingKeyGeoService);
+    public void sendGeoPosition(GeoPositionInfoDTO geoPositionInfoDTO) {
+        produce(geoPositionInfoDTO, exchange, routingKeyGeoService);
     }
 
     public void sendOrderStatus(NotificationDTO notificationDTO) {
@@ -50,8 +50,12 @@ public class RabbitMQProducer {
 
     public void sendNotification(Object body, NotificationType notificationType, String exchange, String routingKey) {
         GeneralDto<Object> generalDto = GeneralDto.builder().body(body).type(notificationType).build();
+        produce(generalDto, exchange, routingKey);
+    }
+
+    public void produce(Object object, String exchange, String routingKey) {
         try {
-            String json = objectMapper.writeValueAsString(generalDto);
+            String json = objectMapper.writeValueAsString(object);
             rabbitTemplate.convertAndSend(
                     exchange,
                     routingKey,
