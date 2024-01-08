@@ -22,5 +22,6 @@ public class OrderMailDTO {
     private UserResponseDTO customer;
     private UserResponseDTO courier;
     private Timestamp deliveryDate;
+    private String trackNumber;
     private Sender sender;
 }

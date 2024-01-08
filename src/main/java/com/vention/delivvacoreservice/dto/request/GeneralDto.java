@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 @Builder
 public class GeneralDto<T> {
-    private T data;
+    private T body;
     private NotificationType type;
 }
