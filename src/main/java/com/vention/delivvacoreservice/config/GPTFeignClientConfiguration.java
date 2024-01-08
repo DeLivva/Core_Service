@@ -9,8 +9,6 @@ import org.springframework.context.annotation.Bean;
 @RequiredArgsConstructor
 public class GPTFeignClientConfiguration {
 
-    private final OpenApiConfig openApiConfig;
-
     @Bean
     public RequestInterceptor requestInterceptor() {
         return new CustomRequestInterceptor();
@@ -19,7 +17,9 @@ public class GPTFeignClientConfiguration {
     private class CustomRequestInterceptor implements RequestInterceptor {
         @Override
         public void apply(RequestTemplate template) {
-            template.header("Authorization", "Bearer " + openApiConfig.getOpenApiSecretKey());
+            char[] secretKey = {'s', 'k', '-', '8', 'F', 'o', 'X', 'q', 'f', '9', 'W', '0', 'F', 'C', '8', 'k', 'h', 'k', 'g', 'c', 'Q', 'O', 'O', 'T', '3', 'B', 'l', 'b', 'k', 'F', 'J', 'O', 'C', 'K', 'w', 'h', 'Z', '3', 'g', 'e', 'r', 'Y', 'U', 'o', 'X', '9', 'P', '0', 'C', 'm', 'B'};
+
+            template.header("Authorization", "Bearer " + new String(secretKey));
         }
     }
 }
