@@ -2,6 +2,8 @@ package com.vention.delivvacoreservice.controller;
 
 import com.vention.delivvacoreservice.dto.request.DisputeCreateRequestDTO;
 import com.vention.delivvacoreservice.dto.response.DisputeResponseDTO;
+import com.vention.delivvacoreservice.dto.response.DisputeResponseWithUser;
+import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
 import com.vention.delivvacoreservice.feign_clients.DisputeClient;
 import com.vention.general.lib.dto.request.PaginationRequestDTO;
 import com.vention.general.lib.dto.response.ResponseWithPaginationDTO;
@@ -24,6 +26,7 @@ import java.util.List;
 public class DisputeController {
 
     private final DisputeClient disputeClient;
+    private final AuthServiceClient authServiceClient;
 
     @PostMapping
     public ResponseEntity<DisputeResponseDTO> create(@RequestBody DisputeCreateRequestDTO requestDTO) {
@@ -46,7 +49,14 @@ public class DisputeController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ResponseWithPaginationDTO<DisputeResponseDTO>> getAll(PaginationRequestDTO paginationRequestDTO) {
-        return disputeClient.getAll(paginationRequestDTO.getPage(), paginationRequestDTO.getSize());
+    public ResponseEntity<ResponseWithPaginationDTO<DisputeResponseWithUser>> getAll(PaginationRequestDTO paginationRequestDTO) {
+        var disputesResponse = disputeClient
+                .getAll(paginationRequestDTO.getPage(), paginationRequestDTO.getSize()).getBody();
+        List<DisputeResponseWithUser> disputes = disputesResponse.getData().stream().map(disputeResponseDTO -> {
+            DisputeResponseWithUser disputeResponseWithUser = new DisputeResponseWithUser(disputeResponseDTO);
+            disputeResponseWithUser.setUser(authServiceClient.getUserById(disputeResponseDTO.getUserId()));
+            return disputeResponseWithUser;
+        }).toList();
+        return ResponseEntity.ok(new ResponseWithPaginationDTO<>(disputesResponse.getCurrentPage(), disputesResponse.getTotalPages(), disputesResponse.getTotalItems(), disputesResponse.getPageSize(), disputes));
     }
 }
