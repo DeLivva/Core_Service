@@ -40,6 +40,9 @@ cloud:
     url: http://Delivva-dispute-env.eba-chhhwrqq.eu-north-1.elasticbeanstalk.com
   geo-service:
     url: http://ec2-51-20-56-164.eu-north-1.compute.amazonaws.com:5000
+  gpt:
+    url: https://api.openai.com/v1/chat/completions
+
 jwt:
   secret-key: 753778214125442A472IkphdZSIsImasV4cCIee6MTY4sdNzUwMTQwN3F452848567890iuyiu67567886578uyutuio78654678976549eyJS678965467uior678545
 
@@ -47,3 +50,6 @@ maps:
   api:
     key: AIzaSyBgcWJIB1LLR5BmWIDxyCxsG6wdoaIefZY
     url: https://maps.googleapis.com/maps/api/geocode/json?latlng=
+
+openapi:
+  secret-key: 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
