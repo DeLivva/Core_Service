@@ -50,6 +50,3 @@ maps:
   api:
     key: AIzaSyBgcWJIB1LLR5BmWIDxyCxsG6wdoaIefZY
     url: https://maps.googleapis.com/maps/api/geocode/json?latlng=
-
-openapi:
-  secret-key: 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

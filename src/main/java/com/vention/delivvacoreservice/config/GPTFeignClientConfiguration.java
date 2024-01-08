@@ -9,8 +9,6 @@ import org.springframework.context.annotation.Bean;
 @RequiredArgsConstructor
 public class GPTFeignClientConfiguration {
 
-    private final OpenApiConfig openApiConfig;
-
     @Bean
     public RequestInterceptor requestInterceptor() {
         return new CustomRequestInterceptor();
