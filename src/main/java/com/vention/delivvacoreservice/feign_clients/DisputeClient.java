@@ -34,7 +34,7 @@ public interface DisputeClient {
     ResponseEntity<List<DisputeResponseDTO>> getByUserId(@RequestParam Long userId);
 
     @GetMapping("/api/v1/disputes/all")
-    ResponseEntity<ResponseWithPaginationDTO<DisputeResponseDTO>> getAll(@RequestParam PaginationRequestDTO paginationRequestDTO);
+    ResponseEntity<ResponseWithPaginationDTO<DisputeResponseDTO>> getAll(@RequestParam Integer page, @RequestParam Integer size);
 
     @GetMapping("/api/v1/dispute-types")
     ResponseEntity<List<DisputeTypeResponseDTO>> getAllTypes();
