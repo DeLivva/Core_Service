@@ -47,6 +47,6 @@ public class DisputeController {
 
     @GetMapping("/all")
     public ResponseEntity<ResponseWithPaginationDTO<DisputeResponseDTO>> getAll(PaginationRequestDTO paginationRequestDTO) {
-        return disputeClient.getAll(paginationRequestDTO);
+        return disputeClient.getAll(paginationRequestDTO.getPage(), paginationRequestDTO.getSize());
     }
 }
