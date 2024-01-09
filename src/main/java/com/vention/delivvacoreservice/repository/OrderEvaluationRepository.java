@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,5 +18,6 @@ public interface OrderEvaluationRepository extends JpaRepository<OrderEvaluation
     @Query("select o.courierId as courierId, avg(e.rate) as rating, count(o) as quantity from order_evaluations e join e.order o group by o.courierId order by rating desc")
     Page<Object[]> couriers(Pageable pageable);
 
-
+    @Query("select o.courierId as courierId, avg(e.rate) as rating, count(o) as quantity from order_evaluations e join e.order o where o.courierId = :id group by o.courierId")
+    List<Object[]> getCourierRating(Long id);
 }
