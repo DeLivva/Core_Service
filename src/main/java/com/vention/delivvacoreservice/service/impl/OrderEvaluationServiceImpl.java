@@ -7,10 +7,10 @@ import com.vention.delivvacoreservice.dto.response.CourierResponseDTO;
 import com.vention.delivvacoreservice.dto.response.OrderEvaluationResponseDto;
 import com.vention.delivvacoreservice.mappers.OrderEvaluationMapper;
 import com.vention.delivvacoreservice.repository.OrderEvaluationRepository;
-import com.vention.delivvacoreservice.repository.OrderRepository;
 import com.vention.delivvacoreservice.service.OrderEvaluationService;
 import com.vention.delivvacoreservice.service.OrderService;
 import com.vention.general.lib.exceptions.BadRequestException;
+import com.vention.general.lib.exceptions.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +27,6 @@ public class OrderEvaluationServiceImpl implements OrderEvaluationService {
     private final OrderEvaluationRepository orderEvaluationRepository;
     private final OrderEvaluationMapper mapper;
     private final OrderService orderService;
-    private final OrderRepository orderRepository;
 
     @Override
     public OrderEvaluationResponseDto create(OrderEvaluationDto orderEvaluationDto) {
@@ -40,7 +39,6 @@ public class OrderEvaluationServiceImpl implements OrderEvaluationService {
         evaluation.setOrder(order);
 
         evaluation = orderEvaluationRepository.save(evaluation);
-        // here will be method which sends notification about rating to courier
         return mapper.convertEntityToDto(evaluation, order.getCourierId());
     }
 
@@ -58,6 +56,18 @@ public class OrderEvaluationServiceImpl implements OrderEvaluationService {
         });
         Collections.sort(couriers);
         return null;
+    }
+
+    @Override
+    public CourierRatingResponseDto getCourierRating(Long id) {
+        List<Object[]> results = orderEvaluationRepository.getCourierRating(id);
+
+        if (!results.isEmpty()) {
+            Object[] result = results.get(0);
+            return new CourierRatingResponseDto((Long) result[0], (Double) result[1], (Long) result[2]);
+        } else {
+            throw new DataNotFoundException("Courier don't have any ratings");
+        }
     }
 
     private List<CourierRatingResponseDto> convertToDto(Page<Object[]> resultList) {

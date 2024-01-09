@@ -42,4 +42,9 @@ public class OrderEvaluationController {
     public ResponseEntity<List<CourierResponseDTO>> filterAndSortCouriers(@RequestBody List<CourierResponseDTO> couriers) {
         return ResponseEntity.ok(orderEvaluationService.filterAndSortCouriers(couriers));
     }
+
+    @GetMapping("/get-courier-rating")
+    public ResponseEntity<CourierRatingResponseDto> getCourierRating(@RequestParam Long id){
+        return ResponseEntity.ok(orderEvaluationService.getCourierRating(id));
+    }
 }

@@ -14,4 +14,6 @@ public interface OrderEvaluationService {
     List<CourierRatingResponseDto> getCouriers(int page, int size);
 
     List<CourierResponseDTO> filterAndSortCouriers(List<CourierResponseDTO> couriers);
+
+    CourierRatingResponseDto getCourierRating(Long id);
 }

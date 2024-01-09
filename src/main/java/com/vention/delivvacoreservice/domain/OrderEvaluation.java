@@ -21,8 +21,6 @@ public class OrderEvaluation extends BaseEntity {
     @Column(nullable = false)
     private Double rate;
 
-    private String description;
-
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
