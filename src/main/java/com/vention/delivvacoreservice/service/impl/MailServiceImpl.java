@@ -28,11 +28,11 @@ public class MailServiceImpl implements MailService {
         String emailTo;
         // courierId and customerId added to set id for offer response link
         if (mailDTO.getSender().equals(Sender.CUSTOMER)) {
-            data.put("senderName", mailDTO.getCustomer().getFirstName());
+            data.put("userSender", mailDTO.getCustomer());
             data.put("userId", mailDTO.getCourier().getId());
             emailTo = mailDTO.getCourier().getEmail();
         } else {
-            data.put("senderName", mailDTO.getCourier().getFirstName());
+            data.put("userSender", mailDTO.getCourier());
             data.put("userId", mailDTO.getCustomer().getId());
             emailTo = mailDTO.getCustomer().getEmail();
         }
