@@ -19,7 +19,4 @@ public class OrderEvaluationDto {
 
     @NotNull
     private Double rate;
-
-    @NotNull
-    private String description;
 }

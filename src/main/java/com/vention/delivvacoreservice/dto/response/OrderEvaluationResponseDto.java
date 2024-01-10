@@ -11,7 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class OrderEvaluationResponseDto {
     private Long id;
-    private String description;
     private String rate;
     private Long orderId;
     private Long userId;

@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      author: Hasilbek
+      id: 6
+      changes:
+        - dropColumn:
+            tableName: order_evaluations
+            columnName: description

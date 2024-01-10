@@ -37,7 +37,7 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponseDTO> getById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(orderService.findById(id));
+        return ResponseEntity.ok(orderService.getByIdWithAddress(id));
     }
 
     @PutMapping("/status")
@@ -48,13 +48,13 @@ public class OrderController {
 
     @PostMapping("/offer-by-courier")
     public ResponseEntity<Void> deliveryOfferByCourier(@RequestBody @Valid OrderOfferDTO dto) {
-        orderService.offerTheDelivery(false, dto.getCourierId(), dto.getOrderId());
+        orderService.offerTheDelivery(false, dto.getUserId(), dto.getOrderId());
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/offer-by-customer")
     public ResponseEntity<Void> deliveryOfferByCustomer(@RequestBody @Valid OrderOfferDTO dto) {
-        orderService.offerTheDelivery(true, dto.getCourierId(), dto.getOrderId());
+        orderService.offerTheDelivery(true, dto.getUserId(), dto.getOrderId());
         return ResponseEntity.ok().build();
     }
 
@@ -66,11 +66,9 @@ public class OrderController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/cancel")
-    public ResponseEntity<Void> rejectTheOrder(
-            @RequestParam Long userId,
-            @RequestParam Long orderId) {
-        orderService.rejectAnOrder(userId, orderId);
+    @PostMapping("/cancel")
+    public ResponseEntity<Void> rejectTheOrder(@Valid @RequestBody OrderOfferDTO dto) {
+        orderService.rejectAnOrder(dto.getUserId(), dto.getOrderId());
         return ResponseEntity.ok().build();
     }
 
