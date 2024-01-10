@@ -16,22 +16,10 @@ public class MapUtils {
     private final MapClient mapClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public String getPostalCodesByCoordinates(OrderDestination destination) {
-        double longitude = destination.getLongitude();
-        double latitude = destination.getLatitude();
-        String jsonData = mapClient.getLocationByCoordinates(latitude, longitude, "json");
-        try {
-            JsonNode jsonNode = objectMapper.readTree(jsonData);
-            return jsonNode.path("address").path("postcode").asText();
-        } catch (JsonProcessingException e) {
-            throw new JsonParsingException(e.getMessage());
-        }
-    }
-
     public String getCityNameByCoordinates(OrderDestination destination) {
         double longitude = destination.getLongitude();
         double latitude = destination.getLatitude();
-        String jsonData = mapClient.getLocationByCoordinates(latitude, longitude, "json");
+        String jsonData = mapClient.getLocationByCoordinates(latitude, longitude, "json", "en");
         try {
             JsonNode jsonNode = objectMapper.readTree(jsonData);
             return jsonNode.path("display_name").asText();
