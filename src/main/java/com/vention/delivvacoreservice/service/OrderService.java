@@ -15,6 +15,8 @@ public interface OrderService {
 
     OrderResponseDTO findById(Long id);
 
+    OrderResponseDTO getByIdWithAddress(Long id);
+
     void setStatus(Long id, OrderStatus status);
 
     void offerTheDelivery(boolean byCustomer, Long courierId, Long orderId);
