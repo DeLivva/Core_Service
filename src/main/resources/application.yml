@@ -39,7 +39,7 @@ cloud:
   dispute-service:
     url: http://Delivva-dispute-env.eba-chhhwrqq.eu-north-1.elasticbeanstalk.com
   geo-service:
-    url: http://ec2-51-20-56-164.eu-north-1.compute.amazonaws.com:5000
+    url: http://delivva-geo-service-app-env.eba-pprm74fq.eu-north-1.elasticbeanstalk.com
   gpt:
     url: https://api.openai.com/v1/chat/completions
 

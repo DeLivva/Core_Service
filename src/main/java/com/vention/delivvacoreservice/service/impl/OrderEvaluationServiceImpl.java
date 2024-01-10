@@ -10,6 +10,7 @@ import com.vention.delivvacoreservice.repository.OrderEvaluationRepository;
 import com.vention.delivvacoreservice.service.OrderEvaluationService;
 import com.vention.delivvacoreservice.service.OrderService;
 import com.vention.general.lib.exceptions.BadRequestException;
+import com.vention.general.lib.exceptions.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -84,7 +84,19 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponseDTO findById(Long id) {
         var order = getById(id);
-        return convertEntityToResponseDTO(order);
+        OrderResponseDTO orderResponseDTO = convertEntityToResponseDTO(order);
+        orderResponseDTO.setStartingPlace(mapUtils.getCityNameByCoordinates(order.getStartingDestination()));
+        orderResponseDTO.setFinalPlace(mapUtils.getCityNameByCoordinates(order.getFinalDestination()));
+        return orderResponseDTO;
+    }
+
+    @Override
+    public OrderResponseDTO getByIdWithAddress(Long id) {
+        var order = getById(id);
+        OrderResponseDTO orderResponseDTO = convertEntityToResponseDTO(order);
+        orderResponseDTO.setStartingPlace(mapUtils.getCityNameByCoordinates(order.getStartingDestination()));
+        orderResponseDTO.setFinalPlace(mapUtils.getCityNameByCoordinates(order.getFinalDestination()));
+        return orderResponseDTO;
     }
 
     @Override
@@ -261,6 +273,8 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderResponseDTO convertEntityToResponseDTO(Order order) {
         var orderResponseDTO = orderMapper.mapOrderEntityToResponse(order);
+        orderResponseDTO.setStartingPlace(mapUtils.getCityNameByCoordinates(order.getStartingDestination()));
+        orderResponseDTO.setFinalPlace(mapUtils.getCityNameByCoordinates(order.getFinalDestination()));
         orderResponseDTO.setCostumer(authServiceClient.getUserById(order.getCustomerId()));
         if (order.getCourierId() != null) {
             orderResponseDTO.setCourier(authServiceClient.getUserById(order.getCourierId()));
