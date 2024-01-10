@@ -10,7 +10,6 @@ import com.vention.delivvacoreservice.repository.OrderEvaluationRepository;
 import com.vention.delivvacoreservice.service.OrderEvaluationService;
 import com.vention.delivvacoreservice.service.OrderService;
 import com.vention.general.lib.exceptions.BadRequestException;
-import com.vention.general.lib.exceptions.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,7 +65,7 @@ public class OrderEvaluationServiceImpl implements OrderEvaluationService {
             Object[] result = results.get(0);
             return new CourierRatingResponseDto((Long) result[0], (Double) result[1], (Long) result[2]);
         } else {
-            throw new DataNotFoundException("Courier don't have any ratings");
+            return new CourierRatingResponseDto(id, (double) 0, 0L);
         }
     }
 
