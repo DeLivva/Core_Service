@@ -16,7 +16,7 @@ import lombok.Setter;
 public class OrderOfferDTO {
     @NotNull
     @Min(value = 1)
-    private Long courierId;
+    private Long userId;
     @NotNull
     @Min(value = 1)
     private Long orderId;

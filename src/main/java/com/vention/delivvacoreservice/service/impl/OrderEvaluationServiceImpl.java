@@ -66,7 +66,7 @@ public class OrderEvaluationServiceImpl implements OrderEvaluationService {
             Object[] result = results.get(0);
             return new CourierRatingResponseDto((Long) result[0], (Double) result[1], (Long) result[2]);
         } else {
-            throw new DataNotFoundException("Courier don't have any ratings");
+            return new CourierRatingResponseDto(id, (double) 0, 0L);
         }
     }
 
