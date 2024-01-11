@@ -101,6 +101,9 @@ public class OrderServiceImpl implements OrderService {
     public void setStatus(Long id, OrderStatus status) {
         var order = getById(id);
         order.setStatus(status);
+        if(Objects.equals(status, OrderStatus.IN_PROGRESS)) {
+            order.setDeliveryStartedAt(new Timestamp(System.currentTimeMillis()));
+        }
         orderRepository.save(order);
 
         mailService.sendStatusUpdateNotification(order);
