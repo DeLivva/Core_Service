@@ -21,7 +21,7 @@ public class FakeGeoPositionSenderService {
             "SELECT NEW com.vention.delivvacoreservice.dto.request.OrderDestinationsDTO " +
             "(o.courierId, o.trackNumber, odStart.latitude, odStart.longitude, odFinal.latitude, odFinal.longitude) " +
             "FROM orders o JOIN o.startingDestination odStart JOIN o.finalDestination odFinal " +
-            "WHERE o.status = 'PICKED_UP'";
+            "WHERE o.status = 'IN_PROGRESS'";
     private final EntityManager entityManager;
     private final FakeGeoPositionHelperService helperService;
 
