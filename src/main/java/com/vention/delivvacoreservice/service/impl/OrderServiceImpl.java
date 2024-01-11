@@ -3,24 +3,24 @@ package com.vention.delivvacoreservice.service.impl;
 import com.vention.delivvacoreservice.domain.Order;
 import com.vention.delivvacoreservice.domain.OrderDestination;
 import com.vention.delivvacoreservice.domain.OrderInvitation;
-import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
-import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
 import com.vention.delivvacoreservice.dto.mail.OrderMailDTO;
 import com.vention.delivvacoreservice.dto.mail.Sender;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
+import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
+import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
 import com.vention.delivvacoreservice.enums.InvitationStatus;
-import com.vention.delivvacoreservice.repository.OrderInvitationsRepository;
-import com.vention.delivvacoreservice.service.GeoCodingService;
-import com.vention.general.lib.dto.response.UserResponseDTO;
 import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
+import com.vention.delivvacoreservice.repository.OrderInvitationsRepository;
 import com.vention.delivvacoreservice.repository.OrderRepository;
+import com.vention.delivvacoreservice.service.GeoCodingService;
 import com.vention.delivvacoreservice.service.MailService;
 import com.vention.delivvacoreservice.service.OrderDestinationService;
 import com.vention.delivvacoreservice.service.OrderService;
 import com.vention.delivvacoreservice.utils.MapUtils;
 import com.vention.general.lib.dto.response.GeolocationDTO;
 import com.vention.general.lib.dto.response.OrderResponseDTO;
+import com.vention.general.lib.dto.response.UserResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
 import com.vention.general.lib.exceptions.BadRequestException;
 import com.vention.general.lib.exceptions.DataNotFoundException;
@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -238,6 +239,17 @@ public class OrderServiceImpl implements OrderService {
                     .toList();
         }
         throw new BadRequestException("Invalid request");
+    }
+
+    @Override
+    public void finishOrderByCourier(Long orderId) {
+        Optional<Order> byId = orderRepository.findById(orderId);
+        if (byId.isEmpty()){
+            throw new DataNotFoundException("No order with this ID.");
+        }
+        Order order = byId.get();
+        order.setDeliveryFinishedAt(Timestamp.from(Instant.now()));
+        orderRepository.save(order);
     }
 
     private List<OrderResponseDTO> getOrdersByCriteria(

@@ -90,4 +90,10 @@ public class OrderController {
     public ResponseEntity<List<OrderResponseDTO>> getHistoryOrders(OrderParticipantsDto dto){
         return ResponseEntity.ok(orderService.getHistoryOrders(dto));
     }
+
+    @PutMapping("/finish-delivery")
+    public ResponseEntity<Void> finishDeliveryByCourier(@RequestParam Long orderId) {
+        orderService.finishOrderByCourier(orderId);
+        return ResponseEntity.noContent().build();
+    }
 }
