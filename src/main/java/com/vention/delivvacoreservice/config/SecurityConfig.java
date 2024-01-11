@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(new IpRequestMatcher()).permitAll()
-                        .requestMatchers("/api/v1/orders/approve-offer", "/api/v1/orders/cancel").permitAll()
+                        .requestMatchers("/api/v1/orders/approve-offer").permitAll()
                         .anyRequest().hasAnyRole("ADMIN", "USER")
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
