@@ -34,4 +34,6 @@ public interface OrderService {
     List<OrderResponseDTO> getActiveOrders(OrderParticipantsDto dto);
 
     List<OrderResponseDTO> getHistoryOrders(OrderParticipantsDto dto);
+
+    void finishOrderByCourier(Long orderId);
 }
