@@ -5,7 +5,6 @@ import com.vention.delivvacoreservice.domain.NotificationType;
 import com.vention.delivvacoreservice.dto.request.GeneralDto;
 import com.vention.delivvacoreservice.dto.request.NotificationDTO;
 import com.vention.general.lib.dto.GeoPositionInfoDTO;
-import com.vention.general.lib.exceptions.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +66,6 @@ public class RabbitMQProducer {
                     });
         } catch (IOException e) {
             log.error("Error occurred while sending notification: ", e);
-            throw new BadRequestException(e.getMessage());
         }
     }
 }
