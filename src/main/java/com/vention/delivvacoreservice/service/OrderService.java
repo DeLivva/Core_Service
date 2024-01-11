@@ -4,6 +4,7 @@ import com.vention.delivvacoreservice.domain.Order;
 import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
 import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
+import com.vention.delivvacoreservice.dto.request.TrackNumberResponseDTO;
 import com.vention.general.lib.dto.response.OrderResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
 
@@ -36,4 +37,6 @@ public interface OrderService {
     List<OrderResponseDTO> getHistoryOrders(OrderParticipantsDto dto);
 
     void finishOrderByCourier(Long orderId);
+
+    TrackNumberResponseDTO getTrackNumberByOrderId(Long orderId);
 }

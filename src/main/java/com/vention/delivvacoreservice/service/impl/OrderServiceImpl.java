@@ -8,6 +8,7 @@ import com.vention.delivvacoreservice.dto.mail.Sender;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
 import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
 import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
+import com.vention.delivvacoreservice.dto.request.TrackNumberResponseDTO;
 import com.vention.delivvacoreservice.enums.InvitationStatus;
 import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
@@ -250,6 +251,15 @@ public class OrderServiceImpl implements OrderService {
         Order order = byId.get();
         order.setDeliveryFinishedAt(Timestamp.from(Instant.now()));
         orderRepository.save(order);
+    }
+
+    @Override
+    public TrackNumberResponseDTO getTrackNumberByOrderId(Long orderId) {
+        Optional<Order> byId = orderRepository.findById(orderId);
+        if (byId.isEmpty()){
+            throw new DataNotFoundException("No order with this ID.");
+        }
+        return TrackNumberResponseDTO.builder().trackNumber(byId.get().getTrackNumber()).build();
     }
 
     private List<OrderResponseDTO> getOrdersByCriteria(
