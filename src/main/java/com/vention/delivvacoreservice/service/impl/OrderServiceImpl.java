@@ -3,24 +3,25 @@ package com.vention.delivvacoreservice.service.impl;
 import com.vention.delivvacoreservice.domain.Order;
 import com.vention.delivvacoreservice.domain.OrderDestination;
 import com.vention.delivvacoreservice.domain.OrderInvitation;
-import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
-import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
 import com.vention.delivvacoreservice.dto.mail.OrderMailDTO;
 import com.vention.delivvacoreservice.dto.mail.Sender;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
+import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
+import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
+import com.vention.delivvacoreservice.dto.request.TrackNumberResponseDTO;
 import com.vention.delivvacoreservice.enums.InvitationStatus;
-import com.vention.delivvacoreservice.repository.OrderInvitationsRepository;
-import com.vention.delivvacoreservice.service.GeoCodingService;
-import com.vention.general.lib.dto.response.UserResponseDTO;
 import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
+import com.vention.delivvacoreservice.repository.OrderInvitationsRepository;
 import com.vention.delivvacoreservice.repository.OrderRepository;
+import com.vention.delivvacoreservice.service.GeoCodingService;
 import com.vention.delivvacoreservice.service.MailService;
 import com.vention.delivvacoreservice.service.OrderDestinationService;
 import com.vention.delivvacoreservice.service.OrderService;
 import com.vention.delivvacoreservice.utils.MapUtils;
 import com.vention.general.lib.dto.response.GeolocationDTO;
 import com.vention.general.lib.dto.response.OrderResponseDTO;
+import com.vention.general.lib.dto.response.UserResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
 import com.vention.general.lib.exceptions.BadRequestException;
 import com.vention.general.lib.exceptions.DataNotFoundException;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -101,9 +103,12 @@ public class OrderServiceImpl implements OrderService {
     public void setStatus(Long id, OrderStatus status) {
         var order = getById(id);
         order.setStatus(status);
+        if(Objects.equals(status, OrderStatus.IN_PROGRESS)) {
+            order.setDeliveryStartedAt(new Timestamp(System.currentTimeMillis()));
+        }
         orderRepository.save(order);
 
-        mailService.sendStatusUpdateNotification(order);
+        mailService.sendStatusUpdateNotification(order, order.getCourierId());
     }
 
     @Override
@@ -145,7 +150,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.save(order);
 
-        mailService.sendStatusUpdateNotification(order);
+        mailService.sendStatusUpdateNotification(order, order.getCourierId());
     }
 
     @Override
@@ -164,9 +169,11 @@ public class OrderServiceImpl implements OrderService {
                 throw new BadRequestException("Order cannot be canceled!!!");
             }
         }
+        long courierId = order.getCourierId();
+        order.setCourierId(null);
         orderRepository.save(order);
 
-        mailService.sendStatusUpdateNotification(order);
+        mailService.sendStatusUpdateNotification(order, courierId);
     }
 
     @Override
@@ -237,6 +244,26 @@ public class OrderServiceImpl implements OrderService {
         throw new BadRequestException("Invalid request");
     }
 
+    @Override
+    public void finishOrderByCourier(Long orderId) {
+        Optional<Order> byId = orderRepository.findById(orderId);
+        if (byId.isEmpty()){
+            throw new DataNotFoundException("No order with this ID.");
+        }
+        Order order = byId.get();
+        order.setDeliveryFinishedAt(Timestamp.from(Instant.now()));
+        orderRepository.save(order);
+    }
+
+    @Override
+    public TrackNumberResponseDTO getTrackNumberByOrderId(Long orderId) {
+        Optional<Order> byId = orderRepository.findById(orderId);
+        if (byId.isEmpty()){
+            throw new DataNotFoundException("No order with this ID.");
+        }
+        return TrackNumberResponseDTO.builder().trackNumber(byId.get().getTrackNumber()).build();
+    }
+
     private List<OrderResponseDTO> getOrdersByCriteria(
             Function<Pageable, Page<Order>> queryFunction,
             Pageable pageable
@@ -262,8 +289,6 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderResponseDTO convertEntityToResponseDTO(Order order) {
         var orderResponseDTO = orderMapper.mapOrderEntityToResponse(order);
-        orderResponseDTO.setStartingPlace(mapUtils.getCityNameByCoordinates(order.getStartingDestination()));
-        orderResponseDTO.setFinalPlace(mapUtils.getCityNameByCoordinates(order.getFinalDestination()));
         orderResponseDTO.setCostumer(authServiceClient.getUserById(order.getCustomerId()));
         if (order.getCourierId() != null) {
             orderResponseDTO.setCourier(authServiceClient.getUserById(order.getCourierId()));

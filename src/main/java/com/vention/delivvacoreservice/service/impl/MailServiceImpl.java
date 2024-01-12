@@ -25,15 +25,14 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendAnOffer(OrderMailDTO mailDTO) {
         Map<String, Object> data = orderMapper.orderMailDTOToMap(mailDTO);
+        data.put("userId", mailDTO.getCourier().getId());
         String emailTo;
         // courierId and customerId added to set id for offer response link
         if (mailDTO.getSender().equals(Sender.CUSTOMER)) {
             data.put("userSender", mailDTO.getCustomer());
-            data.put("userId", mailDTO.getCourier().getId());
             emailTo = mailDTO.getCourier().getEmail();
         } else {
             data.put("userSender", mailDTO.getCourier());
-            data.put("userId", mailDTO.getCustomer().getId());
             emailTo = mailDTO.getCustomer().getEmail();
         }
         NotificationDTO notificationDTO = NotificationDTO.builder()
@@ -45,9 +44,9 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendStatusUpdateNotification(Order order) {
+    public void sendStatusUpdateNotification(Order order, long courierId) {
         String customerEmail = authServiceClient.getUserById(order.getCustomerId()).getEmail();
-        String courierEmail = authServiceClient.getUserById(order.getCourierId()).getEmail();
+        String courierEmail = authServiceClient.getUserById(courierId).getEmail();
 
         Map<String, Object> data = new HashMap<>();
         data.put("trackNumber", order.getTrackNumber());

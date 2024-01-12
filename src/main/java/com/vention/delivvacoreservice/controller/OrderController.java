@@ -5,6 +5,7 @@ import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
 import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
 import com.vention.delivvacoreservice.dto.OrderStatusDTO;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
+import com.vention.delivvacoreservice.dto.request.TrackNumberResponseDTO;
 import com.vention.delivvacoreservice.service.OrderService;
 import com.vention.general.lib.dto.response.OrderResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
@@ -89,5 +90,16 @@ public class OrderController {
     @GetMapping("/get-history-orders")
     public ResponseEntity<List<OrderResponseDTO>> getHistoryOrders(OrderParticipantsDto dto){
         return ResponseEntity.ok(orderService.getHistoryOrders(dto));
+    }
+
+    @PutMapping("/finish-delivery")
+    public ResponseEntity<Void> finishDeliveryByCourier(@RequestParam Long orderId) {
+        orderService.finishOrderByCourier(orderId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/track-number")
+    public ResponseEntity<TrackNumberResponseDTO> getTrackNumberByOrderId(@RequestParam Long orderId) {
+        return ResponseEntity.ok(orderService.getTrackNumberByOrderId(orderId));
     }
 }
