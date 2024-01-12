@@ -108,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
         }
         orderRepository.save(order);
 
-        mailService.sendStatusUpdateNotification(order);
+        mailService.sendStatusUpdateNotification(order, order.getCourierId());
     }
 
     @Override
@@ -150,7 +150,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.save(order);
 
-        mailService.sendStatusUpdateNotification(order);
+        mailService.sendStatusUpdateNotification(order, order.getCourierId());
     }
 
     @Override
@@ -169,10 +169,11 @@ public class OrderServiceImpl implements OrderService {
                 throw new BadRequestException("Order cannot be canceled!!!");
             }
         }
+        long courierId = order.getCourierId();
         order.setCourierId(null);
         orderRepository.save(order);
 
-        mailService.sendStatusUpdateNotification(order);
+        mailService.sendStatusUpdateNotification(order, courierId);
     }
 
     @Override
