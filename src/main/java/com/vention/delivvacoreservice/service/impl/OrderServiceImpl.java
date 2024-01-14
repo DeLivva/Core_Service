@@ -169,8 +169,11 @@ public class OrderServiceImpl implements OrderService {
                 throw new BadRequestException("Order cannot be canceled!!!");
             }
         }
-        long courierId = order.getCourierId();
-        order.setCourierId(null);
+        Long courierId = null;
+        if(order.getCourierId() != null) {
+            courierId = order.getCourierId();
+            order.setCourierId(null);
+        }
         orderRepository.save(order);
 
         mailService.sendStatusUpdateNotification(order, courierId);
