@@ -27,4 +27,9 @@ public class GeoController {
     public ResponseEntity<PathByUserIdDTO> getPathByUserId(@RequestBody UserIdDTO dto) {
         return client.getPathByUserId(dto);
     }
+
+    @GetMapping("/current/{trackNumber}")
+    public ResponseEntity<?> getLastPointByTrackNumber(@PathVariable String trackNumber) {
+        return client.getLastPointByTrackNumber(trackNumber);
+    }
 }
