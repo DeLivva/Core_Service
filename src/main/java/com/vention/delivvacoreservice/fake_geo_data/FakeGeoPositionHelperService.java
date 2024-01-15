@@ -36,7 +36,7 @@ public class FakeGeoPositionHelperService {
         stringBuilder.append(result.getFinalLatitude());
         stringBuilder.append(",");
         stringBuilder.append(result.getFinalLongitude());
-        stringBuilder.append("&profile=car&locale=en&calc_points=true&key=aaf0d9b3-56e3-46a1-8cb2-03c038673f29&points_encoded=false");
+        stringBuilder.append("&profile=car&locale=en&calc_points=true&key=bc37f86d-e020-4df0-ab84-52138216bd84&points_encoded=false");
         try {
             JsonNode points = Objects.requireNonNull(restTemplate.getForObject(stringBuilder.toString(), JsonNode.class))
                     .get("paths").get(0).get("points").get("coordinates");
