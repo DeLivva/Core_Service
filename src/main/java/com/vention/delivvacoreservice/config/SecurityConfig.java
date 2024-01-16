@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(new IpRequestMatcher()).permitAll()
                         .requestMatchers("/api/v1/orders/approve-offer").permitAll()
+                        .requestMatchers("/api/v1/orders/admin-diagram").hasRole("ADMIN")
                         .anyRequest().hasAnyRole("ADMIN", "USER")
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
