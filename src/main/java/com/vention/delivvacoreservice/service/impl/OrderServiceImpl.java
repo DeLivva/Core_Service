@@ -9,6 +9,7 @@ import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
 import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
 import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
 import com.vention.delivvacoreservice.dto.request.TrackNumberResponseDTO;
+import com.vention.delivvacoreservice.dto.response.DiagramResponseDTO;
 import com.vention.delivvacoreservice.dto.response.OrderResponseWithDistance;
 import com.vention.delivvacoreservice.enums.InvitationStatus;
 import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
@@ -37,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -270,6 +272,30 @@ public class OrderServiceImpl implements OrderService {
             throw new DataNotFoundException("No order with this ID.");
         }
         return TrackNumberResponseDTO.builder().trackNumber(byId.get().getTrackNumber()).build();
+    }
+
+    @Override
+    public List<DiagramResponseDTO> getUserDiagramData(Long userId) {
+        List<DiagramResponseDTO> diagramResponseList = new ArrayList<>();
+        Long activeOrdersCount = orderRepository.findOrdersCountByCustomerId(userId).orElse(0L);
+        Long activeDeliveriesCount = orderRepository.findOrdersCountByCourierId(userId).orElse(0L);
+        Long ordersHistoryCount = orderRepository.findOrderHistoryCountByCustomerId(userId).orElse(0L);
+        Long deliveryHistoryCount = orderRepository.findOrderHistoryCountByCourierId(userId).orElse(0L);
+        diagramResponseList.add(new DiagramResponseDTO("Active Orders", activeOrdersCount));
+        diagramResponseList.add(new DiagramResponseDTO("Active Deliveries", activeDeliveriesCount));
+        diagramResponseList.add(new DiagramResponseDTO("History(Orders)", ordersHistoryCount));
+        diagramResponseList.add(new DiagramResponseDTO("History(Deliveries)", deliveryHistoryCount));
+        return diagramResponseList;
+    }
+
+    @Override
+    public List<DiagramResponseDTO> getAdminDiagramData() {
+        List<DiagramResponseDTO> diagramResponseList = new ArrayList<>();
+        Long activeUsersCount = authServiceClient.getAllActiveUsersCount();
+        Long activeOrdersCount = orderRepository.findAllActiveOrdersCount().orElse(0L);
+        diagramResponseList.add(new DiagramResponseDTO("Active Users", activeUsersCount));
+        diagramResponseList.add(new DiagramResponseDTO("Active Orders", activeOrdersCount));
+        return diagramResponseList;
     }
 
     private List<OrderResponseDTO> getOrdersByCriteria(
