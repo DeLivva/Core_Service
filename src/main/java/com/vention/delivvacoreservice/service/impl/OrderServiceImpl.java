@@ -9,6 +9,8 @@ import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
 import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
 import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
 import com.vention.delivvacoreservice.dto.request.TrackNumberResponseDTO;
+import com.vention.delivvacoreservice.dto.response.DiagramResponseDTO;
+import com.vention.delivvacoreservice.dto.response.OrderResponseWithDistance;
 import com.vention.delivvacoreservice.enums.InvitationStatus;
 import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
@@ -25,6 +27,7 @@ import com.vention.general.lib.dto.response.UserResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
 import com.vention.general.lib.exceptions.BadRequestException;
 import com.vention.general.lib.exceptions.DataNotFoundException;
+import com.vention.general.lib.utils.GeoUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -253,7 +257,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void finishOrderByCourier(Long orderId) {
         Optional<Order> byId = orderRepository.findById(orderId);
-        if (byId.isEmpty()){
+        if (byId.isEmpty()) {
             throw new DataNotFoundException("No order with this ID.");
         }
         Order order = byId.get();

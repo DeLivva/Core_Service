@@ -5,10 +5,13 @@ import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
 import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
 import com.vention.delivvacoreservice.dto.request.TrackNumberResponseDTO;
+import com.vention.delivvacoreservice.dto.response.DiagramResponseDTO;
+import com.vention.delivvacoreservice.dto.response.OrderResponseWithDistance;
 import com.vention.general.lib.dto.response.OrderResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OrderService {
 
@@ -16,7 +19,7 @@ public interface OrderService {
 
     OrderResponseDTO findById(Long id);
 
-    OrderResponseDTO getByIdWithAddress(Long id);
+    OrderResponseWithDistance getByIdWithAddress(Long id);
 
     void setStatus(Long id, OrderStatus status);
 
