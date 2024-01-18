@@ -20,4 +20,7 @@ public interface AuthServiceClient {
 
     @GetMapping("/api/v1/users/all-ids")
     List<Long> getUsersIdList(@RequestParam Boolean isCourier);
+
+    @GetMapping("/api/v1/users/active-users")
+    Long getAllActiveUsersCount();
 }

@@ -7,5 +7,5 @@ public interface MailService {
 
     void sendAnOffer(OrderMailDTO mailDTO);
 
-    void sendStatusUpdateNotification(Order order, long courierId);
+    void sendStatusUpdateNotification(Order order, Long courierId);
 }

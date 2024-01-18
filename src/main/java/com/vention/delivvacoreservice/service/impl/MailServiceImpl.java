@@ -44,9 +44,9 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendStatusUpdateNotification(Order order, long courierId) {
+    public void sendStatusUpdateNotification(Order order, Long courierId) {
         String customerEmail = authServiceClient.getUserById(order.getCustomerId()).getEmail();
-        String courierEmail = authServiceClient.getUserById(courierId).getEmail();
+        String courierEmail = (courierId != null) ? authServiceClient.getUserById(courierId).getEmail() : null;
 
         Map<String, Object> data = new HashMap<>();
         data.put("trackNumber", order.getTrackNumber());

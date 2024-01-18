@@ -6,6 +6,7 @@ import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
 import com.vention.delivvacoreservice.dto.OrderStatusDTO;
 import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
 import com.vention.delivvacoreservice.dto.request.TrackNumberResponseDTO;
+import com.vention.delivvacoreservice.dto.response.DiagramResponseDTO;
 import com.vention.delivvacoreservice.service.OrderService;
 import com.vention.general.lib.dto.response.OrderResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
@@ -101,5 +102,15 @@ public class OrderController {
     @GetMapping("/track-number")
     public ResponseEntity<TrackNumberResponseDTO> getTrackNumberByOrderId(@RequestParam Long orderId) {
         return ResponseEntity.ok(orderService.getTrackNumberByOrderId(orderId));
+    }
+
+    @GetMapping("/user-diagram")
+    public ResponseEntity<List<DiagramResponseDTO>> getUserDiagramData(@RequestParam Long userId) {
+        return ResponseEntity.ok(orderService.getUserDiagramData(userId));
+    }
+
+    @GetMapping("/admin-diagram")
+    public ResponseEntity<List<DiagramResponseDTO>> getAdminDiagramData() {
+        return ResponseEntity.ok(orderService.getAdminDiagramData());
     }
 }

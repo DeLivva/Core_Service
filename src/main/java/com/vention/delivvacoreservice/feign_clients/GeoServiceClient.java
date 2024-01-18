@@ -19,4 +19,7 @@ public interface GeoServiceClient {
 
     @RequestMapping(method = GET, value = "")
     ResponseEntity<PathByUserIdDTO> getPathByUserId(@RequestBody UserIdDTO dto);
+
+    @RequestMapping(method = GET, value = "/current/{trackNumber}")
+    ResponseEntity<?> getLastPointByTrackNumber(@PathVariable String trackNumber);
 }
