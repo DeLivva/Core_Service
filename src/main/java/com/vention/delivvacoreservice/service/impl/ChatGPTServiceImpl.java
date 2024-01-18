@@ -10,12 +10,14 @@ import com.vention.delivvacoreservice.feign_clients.GPTClient;
 import com.vention.delivvacoreservice.service.ChatGPTService;
 import com.vention.delivvacoreservice.service.OrderService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class ChatGPTServiceImpl implements ChatGPTService {
@@ -66,7 +68,7 @@ public class ChatGPTServiceImpl implements ChatGPTService {
             }
             return orders;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warn("Parse gpt response to order");
             throw new RuntimeException("Parsing error json string to order dto" + e.getMessage());
         }
     }
