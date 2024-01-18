@@ -9,6 +9,7 @@ import com.vention.delivvacoreservice.dto.request.OrderCreationRequestDTO;
 import com.vention.delivvacoreservice.dto.request.OrderFilterDto;
 import com.vention.delivvacoreservice.dto.request.OrderParticipantsDto;
 import com.vention.delivvacoreservice.dto.request.TrackNumberResponseDTO;
+import com.vention.delivvacoreservice.dto.response.OrderResponseWithDistance;
 import com.vention.delivvacoreservice.enums.InvitationStatus;
 import com.vention.delivvacoreservice.feign_clients.AuthServiceClient;
 import com.vention.delivvacoreservice.mappers.OrderMapper;
@@ -25,6 +26,7 @@ import com.vention.general.lib.dto.response.UserResponseDTO;
 import com.vention.general.lib.enums.OrderStatus;
 import com.vention.general.lib.exceptions.BadRequestException;
 import com.vention.general.lib.exceptions.DataNotFoundException;
+import com.vention.general.lib.utils.GeoUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -90,12 +92,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponseDTO getByIdWithAddress(Long id) {
+    public OrderResponseWithDistance getByIdWithAddress(Long id) {
         var order = getById(id);
         OrderResponseDTO orderResponseDTO = convertEntityToResponseDTO(order);
         orderResponseDTO.setStartingPlace(mapUtils.getCityNameByCoordinates(order.getStartingDestination()));
         orderResponseDTO.setFinalPlace(mapUtils.getCityNameByCoordinates(order.getFinalDestination()));
-        return orderResponseDTO;
+
+        GeolocationDTO startingDestination = orderResponseDTO.getStartingDestination();
+        GeolocationDTO finalDestination = orderResponseDTO.getFinalDestination();
+        GeoUtils geoUtils = new GeoUtils();
+        double distanceInKm = geoUtils.calculateDistanceInKm(startingDestination.getLatitude(), startingDestination.getLongitude(), finalDestination.getLatitude(), finalDestination.getLongitude());
+
+        return new OrderResponseWithDistance(orderResponseDTO, distanceInKm);
     }
 
 
@@ -103,7 +111,7 @@ public class OrderServiceImpl implements OrderService {
     public void setStatus(Long id, OrderStatus status) {
         var order = getById(id);
         order.setStatus(status);
-        if(Objects.equals(status, OrderStatus.IN_PROGRESS)) {
+        if (Objects.equals(status, OrderStatus.IN_PROGRESS)) {
             order.setDeliveryStartedAt(new Timestamp(System.currentTimeMillis()));
         }
         orderRepository.save(order);
@@ -247,7 +255,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void finishOrderByCourier(Long orderId) {
         Optional<Order> byId = orderRepository.findById(orderId);
-        if (byId.isEmpty()){
+        if (byId.isEmpty()) {
             throw new DataNotFoundException("No order with this ID.");
         }
         Order order = byId.get();
