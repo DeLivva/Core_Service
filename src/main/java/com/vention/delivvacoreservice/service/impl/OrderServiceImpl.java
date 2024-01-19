@@ -305,7 +305,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Map<String, Boolean> doesUserHaveActiveOrders(Long userId) {
         Map<String, Boolean> response = new HashMap<>();
-        response.put("hasActiveOrders", orderRepository.findUserAllStartedOrdersCount(userId).isPresent());
+        Long orders = orderRepository.findUserAllStartedOrdersCount(userId);
+        response.put("hasActiveOrders", orders != 0);
         return response;
     }
 
