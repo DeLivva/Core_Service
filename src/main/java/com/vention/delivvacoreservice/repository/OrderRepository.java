@@ -56,5 +56,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Long> findAllActiveOrdersCount();
 
     @Query("select count(o) from orders o where o.deliveryStartedAt <> null and o.deliveryFinishedAt = null and (o.customerId = :userId or o.courierId = :userId)")
-    Optional<Long> findUserAllStartedOrdersCount(Long userId);
+    Long findUserAllStartedOrdersCount(Long userId);
 }
