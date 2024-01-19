@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -112,5 +113,10 @@ public class OrderController {
     @GetMapping("/admin-diagram")
     public ResponseEntity<List<DiagramResponseDTO>> getAdminDiagramData() {
         return ResponseEntity.ok(orderService.getAdminDiagramData());
+    }
+
+    @GetMapping("/user-has-started-orders")
+    public ResponseEntity<Map<String, Boolean>> doesUserHaveActiveOrders(@RequestParam Long userId){
+        return ResponseEntity.ok(orderService.doesUserHaveActiveOrders(userId));
     }
 }

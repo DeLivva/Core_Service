@@ -39,7 +39,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -115,6 +117,8 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(status);
         if (Objects.equals(status, OrderStatus.IN_PROGRESS)) {
             order.setDeliveryStartedAt(new Timestamp(System.currentTimeMillis()));
+        } else if (Objects.equals(status, OrderStatus.DONE)) {
+            order.setDeliveryFinishedAt(new Timestamp(System.currentTimeMillis()));
         }
         orderRepository.save(order);
 
@@ -268,7 +272,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public TrackNumberResponseDTO getTrackNumberByOrderId(Long orderId) {
         Optional<Order> byId = orderRepository.findById(orderId);
-        if (byId.isEmpty()){
+        if (byId.isEmpty()) {
             throw new DataNotFoundException("No order with this ID.");
         }
         return TrackNumberResponseDTO.builder().trackNumber(byId.get().getTrackNumber()).build();
@@ -296,6 +300,13 @@ public class OrderServiceImpl implements OrderService {
         diagramResponseList.add(new DiagramResponseDTO("Active Users", activeUsersCount));
         diagramResponseList.add(new DiagramResponseDTO("Active Orders", activeOrdersCount));
         return diagramResponseList;
+    }
+
+    @Override
+    public Map<String, Boolean> doesUserHaveActiveOrders(Long userId) {
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("hasActiveOrders", orderRepository.findUserAllStartedOrdersCount(userId).isPresent());
+        return response;
     }
 
     private List<OrderResponseDTO> getOrdersByCriteria(
