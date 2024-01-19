@@ -54,4 +54,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("select count(o) from orders o where o.status <> 'REJECTED_BY_CUSTOMER' and o.status <> 'DONE'")
     Optional<Long> findAllActiveOrdersCount();
+
+    @Query("select count(o) from orders o where o.deliveryStartedAt <> null and o.deliveryFinishedAt = null and (o.customerId = :userId or o.courierId = :userId)")
+    Optional<Long> findUserAllStartedOrdersCount(Long userId);
 }

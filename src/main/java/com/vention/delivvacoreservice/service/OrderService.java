@@ -46,4 +46,6 @@ public interface OrderService {
     List<DiagramResponseDTO> getUserDiagramData(Long userId);
 
     List<DiagramResponseDTO> getAdminDiagramData();
+
+    Map<String, Boolean> doesUserHaveActiveOrders(Long userId);
 }
